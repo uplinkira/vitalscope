@@ -6,19 +6,22 @@
 <title>Micro Mirror MVP</title>
 <style>
   :root {
-    --bg: #f2efe8;
-    --paper: rgba(255, 251, 244, 0.9);
-    --panel: rgba(255, 248, 238, 0.88);
-    --panel-strong: rgba(255, 245, 231, 0.96);
-    --ink: #1f2a21;
-    --muted: #6a756c;
-    --line: rgba(42, 55, 45, 0.12);
-    --sage: #486a57;
-    --jade: #6e9b78;
-    --amber: #c98e45;
-    --rose: #c86f5d;
-    --sky: #6f8ea5;
-    --glow: 0 24px 50px rgba(51, 47, 37, 0.1);
+    --bg: #efe7d7;
+    --paper: rgba(255, 251, 244, 0.88);
+    --panel: rgba(253, 246, 234, 0.9);
+    --panel-strong: rgba(255, 241, 223, 0.96);
+    --ink: #182118;
+    --muted: #657060;
+    --line: rgba(36, 48, 39, 0.1);
+    --sage: #2f6f57;
+    --jade: #4f9a72;
+    --amber: #e59a34;
+    --rose: #d46655;
+    --sky: #4d7fa3;
+    --navy: #20354b;
+    --mint: #c8f0dd;
+    --glow: 0 28px 60px rgba(45, 38, 24, 0.12);
+    --glow-strong: 0 30px 80px rgba(34, 30, 22, 0.18);
     --radius: 24px;
   }
 
@@ -33,9 +36,41 @@
     color: var(--ink);
     font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     background:
-      radial-gradient(circle at top left, rgba(110, 155, 120, 0.18), transparent 30%),
-      radial-gradient(circle at top right, rgba(201, 142, 69, 0.15), transparent 28%),
-      linear-gradient(180deg, #f6f2ea 0%, #ece6db 100%);
+      radial-gradient(circle at 12% 18%, rgba(91, 175, 137, 0.25), transparent 26%),
+      radial-gradient(circle at 86% 12%, rgba(229, 154, 52, 0.22), transparent 24%),
+      radial-gradient(circle at 74% 62%, rgba(77, 127, 163, 0.16), transparent 24%),
+      linear-gradient(180deg, #f7f0e2 0%, #efe2ca 100%);
+    position: relative;
+  }
+
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::before {
+    background:
+      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+    opacity: 0.32;
+  }
+
+  body::after {
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.36), transparent 18%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.24), transparent 16%);
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(0, -12px, 0) scale(1.04); }
   }
 
   a {
@@ -53,7 +88,8 @@
     padding: 16px 22px;
     border-bottom: 1px solid var(--line);
     backdrop-filter: blur(18px);
-    background: rgba(246, 242, 234, 0.82);
+    background: rgba(248, 241, 229, 0.74);
+    box-shadow: 0 10px 32px rgba(42, 37, 27, 0.08);
   }
 
   .brand {
@@ -116,6 +152,8 @@
     width: min(1360px, calc(100vw - 28px));
     margin: 0 auto;
     padding: 24px 0 42px;
+    position: relative;
+    z-index: 1;
   }
 
   .hero {
@@ -130,6 +168,7 @@
     border-radius: var(--radius);
     background: var(--paper);
     box-shadow: var(--glow);
+    backdrop-filter: blur(16px);
     overflow: hidden;
   }
 
@@ -137,8 +176,20 @@
     position: relative;
     padding: 26px;
     background:
-      radial-gradient(circle at bottom right, rgba(110, 155, 120, 0.16), transparent 34%),
-      linear-gradient(180deg, rgba(255, 251, 244, 0.98), rgba(255, 247, 236, 0.95));
+      radial-gradient(circle at 78% 18%, rgba(110, 155, 120, 0.16), transparent 26%),
+      radial-gradient(circle at 12% 82%, rgba(229, 154, 52, 0.18), transparent 24%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(255, 245, 226, 0.96));
+  }
+
+  .hero-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -18% -30% auto;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.34), transparent 66%);
+    pointer-events: none;
   }
 
   .eyebrow {
@@ -169,6 +220,158 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 20px;
+  }
+
+  .season-strip,
+  .hero-dashboard,
+  .reward-grid,
+  .quest-track,
+  .quest-topline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .season-strip {
+    margin-top: 18px;
+  }
+
+  .season-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(36, 48, 39, 0.1);
+    background: rgba(255, 255, 255, 0.56);
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .season-pill.accent {
+    background: linear-gradient(135deg, rgba(47, 111, 87, 0.16), rgba(229, 154, 52, 0.18));
+    color: var(--ink);
+  }
+
+  .hero-dashboard,
+  .reward-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hero-dash-card,
+  .reward-card,
+  .quest-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid rgba(36, 48, 39, 0.1);
+    background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,247,233,0.8));
+    padding: 16px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+
+  .hero-dash-card::before,
+  .reward-card::before,
+  .quest-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.22), transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-dash-card strong,
+  .reward-card strong,
+  .quest-panel strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 26px;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-dash-card span,
+  .reward-card span,
+  .quest-panel span {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hero-dash-card small,
+  .reward-card small,
+  .quest-panel small {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .quest-track {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .quest-step {
+    position: relative;
+    min-height: 104px;
+    border-radius: 20px;
+    border: 1px solid rgba(36, 48, 39, 0.1);
+    background: rgba(255,255,255,0.68);
+    padding: 14px 14px 14px 54px;
+    overflow: hidden;
+  }
+
+  .quest-step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: 14px;
+    top: 16px;
+    width: 28px;
+    height: 28px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+  }
+
+  .quest-step.done {
+    border-color: rgba(47, 111, 87, 0.2);
+    background: linear-gradient(180deg, rgba(225, 247, 235, 0.84), rgba(249, 255, 251, 0.8));
+  }
+
+  .quest-step.done::before {
+    background: linear-gradient(135deg, var(--sage), var(--jade));
+  }
+
+  .quest-step.active {
+    border-color: rgba(229, 154, 52, 0.28);
+    box-shadow: 0 0 0 1px rgba(229, 154, 52, 0.14), 0 12px 32px rgba(229, 154, 52, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .quest-step strong {
+    display: block;
+    font-size: 14px;
+  }
+
+  .quest-step span {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--muted);
   }
 
   .btn {
@@ -209,7 +412,7 @@
     padding: 18px;
     border-radius: 20px;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.62);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 248, 235, 0.76));
   }
 
   .summary-box .value {
@@ -427,6 +630,12 @@
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.62);
     cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+
+  .timeline-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(55, 47, 31, 0.08);
   }
 
   .timeline-item.active {
@@ -574,6 +783,42 @@
     gap: 14px;
   }
 
+  .checkout-section {
+    background:
+      radial-gradient(circle at 88% 12%, rgba(229, 154, 52, 0.18), transparent 24%),
+      radial-gradient(circle at 12% 88%, rgba(47, 111, 87, 0.18), transparent 24%),
+      linear-gradient(180deg, rgba(255, 246, 232, 0.92), rgba(255, 239, 215, 0.96));
+  }
+
+  .quest-board {
+    border-radius: 24px;
+    border: 1px solid rgba(36, 48, 39, 0.1);
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,244,224,0.78));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.52);
+    margin-bottom: 14px;
+  }
+
+  .quest-board-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  .quest-board h4 {
+    font-size: 18px;
+    letter-spacing: -0.03em;
+  }
+
+  .quest-board p {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
   .plan-grid {
     display: grid;
     gap: 10px;
@@ -583,13 +828,76 @@
     padding: 15px;
     border-radius: 20px;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.66);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 248, 236, 0.84));
     cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    position: relative;
+    overflow: hidden;
   }
 
   .plan.active {
     border-color: rgba(72, 106, 87, 0.3);
-    background: rgba(110, 155, 120, 0.1);
+    background: linear-gradient(180deg, rgba(211, 244, 226, 0.66), rgba(255, 249, 236, 0.86));
+    box-shadow: 0 18px 30px rgba(69, 90, 76, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .plan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(61, 52, 34, 0.08);
+  }
+
+  .plan-tier {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid rgba(36, 48, 39, 0.1);
+    background: rgba(255,255,255,0.54);
+  }
+
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .plan-price strong {
+    font-size: 28px;
+    letter-spacing: -0.05em;
+  }
+
+  .plan-price span {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .plan-perks {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .plan-perks li {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .plan-questline {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(36, 48, 39, 0.12);
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--muted);
   }
 
   .plan strong {
@@ -645,7 +953,7 @@
     padding: 14px;
     border-radius: 18px;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.64);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 247, 234, 0.78));
   }
 
   .mini-card strong,
@@ -822,7 +1130,7 @@
     padding: 14px;
     border-radius: 18px;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.64);
+    background: linear-gradient(180deg, rgba(255,255,255,0.74), rgba(255,248,236,0.8));
   }
 
   .order-head {
@@ -898,6 +1206,12 @@
     .workflow-split {
       grid-template-columns: 1fr;
     }
+
+    .hero-dashboard,
+    .reward-grid,
+    .quest-track {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 760px) {
@@ -911,7 +1225,10 @@
     .wallet-strip,
     .mini-grid,
     .foundation-grid,
-    .workflow-grid {
+    .workflow-grid,
+    .hero-dashboard,
+    .reward-grid,
+    .quest-track {
       grid-template-columns: 1fr;
     }
 
@@ -959,6 +1276,29 @@
         <button class="btn secondary" id="hero-capture">保存今日镜像</button>
         <button class="btn" id="scroll-order">去看戒指订购</button>
       </div>
+      <div class="season-strip">
+        <span class="season-pill accent" id="hero-season">Season 01 · Recovery Sprint</span>
+        <span class="season-pill" id="hero-rank-pill">Rank loading</span>
+        <span class="season-pill" id="hero-next-pill">Next unlock loading</span>
+      </div>
+      <div class="hero-dashboard">
+        <div class="hero-dash-card">
+          <span>Mirror Rank</span>
+          <strong id="hero-rank">Mirror Seed</strong>
+          <small id="hero-level-note">完成连续镜像、支付闭环和 agent 身份后会不断升级。</small>
+        </div>
+        <div class="hero-dash-card">
+          <span>Quest XP</span>
+          <strong id="hero-xp">0 XP</strong>
+          <small id="hero-xp-note">镜像记录、戒指接入、链上支付和 ERC-8004 身份都会累计积分。</small>
+        </div>
+        <div class="hero-dash-card">
+          <span>Today Reward</span>
+          <strong id="hero-reward">+0 XP</strong>
+          <small id="hero-daily-quest">今天先完成第一条镜像记录。</small>
+        </div>
+      </div>
+      <div class="quest-track" id="hero-quest-track"></div>
     </article>
 
     <article class="card hero-card">
@@ -1121,13 +1461,44 @@
         </div>
       </article>
 
-      <article class="card section" id="order-section">
+      <article class="card section checkout-section" id="order-section">
         <div class="section-head">
           <div>
             <h3>Smart Ring Preorder</h3>
             <p>进阶版把照片以外的恢复信号一起接入。这里直接保留 GOAT Testnet3 支付能力，方便黑客松现场演示产品订购闭环。</p>
           </div>
           <div class="badge mono" id="order-badge">checkout idle</div>
+        </div>
+
+        <div class="quest-board">
+          <div class="quest-board-head">
+            <div>
+              <h4>Quest Checkout Board</h4>
+              <p>把支付闭环讲成五段任务：连钱包、建单、签名、付款、确认。这样 judge 一眼就能看懂产品推进，也能看懂 agent 何时从建议走到行动。</p>
+            </div>
+            <div class="season-strip" style="margin-top:0">
+              <span class="season-pill accent" id="checkout-season">Quest checkout live</span>
+              <span class="season-pill" id="checkout-next">Next · connect wallet</span>
+            </div>
+          </div>
+          <div class="reward-grid">
+            <div class="reward-card">
+              <span>Current Rank</span>
+              <strong id="checkout-rank">Mirror Seed</strong>
+              <small id="checkout-status-copy">连接钱包后可开始支付任务。</small>
+            </div>
+            <div class="reward-card">
+              <span>Plan Reward</span>
+              <strong id="checkout-xp">+0 XP</strong>
+              <small id="checkout-reward">选中套餐后显示本轮支付可解锁的奖励。</small>
+            </div>
+            <div class="reward-card">
+              <span>Next Unlock</span>
+              <strong id="checkout-next-unlock">GOAT checkout rail</strong>
+              <small id="checkout-next-copy">完成支付后可继续讲硬件订阅、agent 身份和长期服务升级。</small>
+            </div>
+          </div>
+          <div class="quest-track" id="checkout-track"></div>
         </div>
 
         <div class="mini-grid" style="margin-bottom:14px">
@@ -1357,24 +1728,51 @@
       title: "Mirror Daily",
       price: "19",
       asset: "USDC",
+      tier: "starter quest",
+      rarity: "common",
       tagline: "仅软件订阅",
       description: "每日镜像、时间线、双参考报告、每周行动实验。",
+      perks: [
+        "每日镜像记录 + 时间线趋势",
+        "中医参照 + 现代医学参照双报告",
+        "适合快速讲 MVP 的轻量订阅入口",
+      ],
+      questCopy: "完成 7 天 streak 后，最适合展示“长期观察比一次判断更重要”的产品逻辑。",
+      xpReward: 90,
     },
     {
       id: "ring",
       title: "Mirror Ring Beta",
       price: "199",
       asset: "USDC",
+      tier: "featured raid",
+      rarity: "rare",
       tagline: "智能戒指 + 90 天订阅",
       description: "增加 HRV、静息心率、夜间恢复等照片外信号。",
+      perks: [
+        "智能戒指硬件预购",
+        "90 天恢复订阅与趋势追踪",
+        "HRV + 静息心率 + 面部信号联合判断",
+      ],
+      questCopy: "这是最适合上台演示的主线套餐，因为它同时串起硬件、支付、订阅和 agent 决策。",
+      xpReward: 260,
     },
     {
       id: "ring-plus",
       title: "Mirror Ring Plus",
       price: "349",
       asset: "USDT",
+      tier: "legend tier",
+      rarity: "epic",
       tagline: "戒指 + 季度复盘",
       description: "适合重度健康管理用户，包含季度复盘和更高频提醒。",
+      perks: [
+        "戒指 + 季度复盘服务",
+        "更高频提醒和长期恢复追踪",
+        "更适合讲升级订阅和高客单价服务",
+      ],
+      questCopy: "适合答辩时展示更完整的商业化路径，包括季度复盘、升级订阅和后续商户运营。",
+      xpReward: 420,
     },
   ];
 
@@ -1903,12 +2301,258 @@
     return PLANS.find((item) => item.id === state.selectedPlanId) || PLANS[1];
   }
 
+  function currentQuestOrder() {
+    return state.currentOrder || state.orders[0] || null;
+  }
+
+  function hasAgentIdentity() {
+    return /^\d+$/.test((state.agentLab.agentId || "").trim());
+  }
+
+  function computeGamifiedProfile() {
+    const records = state.records.length;
+    const streak = consecutiveDays(state.records);
+    const ringRecords = state.records.filter((item) => item.useRing).length;
+    const confirmedOrders = state.orders.filter((item) => item.status === "confirmed").length;
+    const activeOrders = state.orders.filter((item) => ["created", "authorized", "submitted", "pending"].includes(item.status)).length;
+    const xp =
+      records * 90 +
+      streak * 110 +
+      ringRecords * 70 +
+      confirmedOrders * 260 +
+      activeOrders * 140 +
+      (state.wallet.account ? 120 : 0) +
+      (hasAgentIdentity() ? 180 : 0);
+
+    const ranks = [
+      { min: 0, label: "Mirror Seed", next: "Pulse Scout" },
+      { min: 240, label: "Pulse Scout", next: "Signal Ranger" },
+      { min: 520, label: "Signal Ranger", next: "Recovery Pilot" },
+      { min: 860, label: "Recovery Pilot", next: "Ring Pathfinder" },
+      { min: 1260, label: "Ring Pathfinder", next: "Mirror Sage" },
+      { min: 1780, label: "Mirror Sage", next: "Adaptive Oracle" },
+      { min: 2400, label: "Adaptive Oracle", next: "Adaptive Oracle" },
+    ];
+
+    let rank = ranks[0];
+    for (const candidate of ranks) {
+      if (xp >= candidate.min) {
+        rank = candidate;
+      }
+    }
+
+    const level = ranks.indexOf(rank) + 1;
+    const nextThreshold = ranks[level]?.min ?? null;
+    const currentOrder = currentQuestOrder();
+    let dailyQuest = "先保存今天的镜像，解锁第一条健康方向。";
+    let nextUnlock = "First mirror report";
+    let nextRewardXp = 90;
+
+    if (!records) {
+      dailyQuest = "先保存今天的镜像，解锁第一条健康方向。";
+      nextUnlock = "First mirror report";
+      nextRewardXp = 90;
+    } else if (records < 3) {
+      dailyQuest = "再完成两天连续镜像，让趋势判断更可信。";
+      nextUnlock = "7-day trend confidence";
+      nextRewardXp = 120;
+    } else if (!ringRecords) {
+      dailyQuest = "打开智能戒指模式，拿到照片外的恢复信号。";
+      nextUnlock = "camera + ring dual mode";
+      nextRewardXp = 160;
+    } else if (!state.wallet.account) {
+      dailyQuest = "连接 MetaMask，进入 GOAT 支付任务链。";
+      nextUnlock = "GOAT checkout rail";
+      nextRewardXp = 120;
+    } else if (!currentOrder) {
+      dailyQuest = `创建 ${currentPlan().title} 预购单，进入支付任务。`;
+      nextUnlock = `${currentPlan().title} order intent`;
+      nextRewardXp = currentPlan().xpReward;
+    } else if (!currentOrder.signature) {
+      dailyQuest = "完成订单签名授权，领取 intent badge。";
+      nextUnlock = "authorized order intent";
+      nextRewardXp = 140;
+    } else if (!currentOrder.txHash || currentOrder.status === "failed") {
+      dailyQuest = currentOrder.status === "failed"
+        ? "支付失败后重新提交链上付款，拿到可展示的成功交易。"
+        : "发起链上支付，演示 x402 风格结算体验。";
+      nextUnlock = "on-chain checkout";
+      nextRewardXp = 220;
+    } else if (currentOrder.status !== "confirmed") {
+      dailyQuest = "刷新订单状态，拿到 confirmed 截图。";
+      nextUnlock = "payment confirmed";
+      nextRewardXp = 180;
+    } else if (!hasAgentIdentity()) {
+      dailyQuest = "在 ERC-8004 面板注册 agent，解锁身份徽章。";
+      nextUnlock = "ERC-8004 identity badge";
+      nextRewardXp = 200;
+    } else {
+      dailyQuest = "继续累积镜像和订阅数据，演示长期 adaptive care。";
+      nextUnlock = "adaptive care season";
+      nextRewardXp = 240;
+    }
+
+    return {
+      records,
+      streak,
+      ringRecords,
+      confirmedOrders,
+      activeOrders,
+      xp,
+      level,
+      rank: rank.label,
+      nextRank: rank.next,
+      xpToNext: nextThreshold ? Math.max(0, nextThreshold - xp) : 0,
+      dailyQuest,
+      nextUnlock,
+      nextRewardXp,
+    };
+  }
+
+  function buildJourneyStages() {
+    const records = state.records.length;
+    const ringReady = state.records.some((item) => item.useRing);
+    const orderReady = state.orders.length > 0;
+    return [
+      {
+        step: "1",
+        title: "Capture",
+        done: records > 0,
+        copy: records > 0 ? `${records} 条镜像已入库` : "先保存今天的镜像记录",
+      },
+      {
+        step: "2",
+        title: "Trend",
+        done: records >= 3,
+        copy: records >= 3 ? "趋势参照已可直接演示" : "至少 3 条记录后更像长期观察产品",
+      },
+      {
+        step: "3",
+        title: "Ring Sync",
+        done: ringReady,
+        copy: ringReady ? "camera + ring 双信号已解锁" : "打开戒指模式，补足照片外的恢复信号",
+      },
+      {
+        step: "4",
+        title: "Checkout",
+        done: orderReady,
+        copy: orderReady ? "订购关卡已开启" : "创建预购单，展示硬件与订阅闭环",
+      },
+      {
+        step: "5",
+        title: "Agent ID",
+        done: hasAgentIdentity(),
+        copy: hasAgentIdentity() ? "ERC-8004 身份已准备" : "注册 agent 身份，补完信任与信誉层",
+      },
+    ];
+  }
+
+  function buildCheckoutStages() {
+    const order = currentQuestOrder();
+    const hasWallet = Boolean(state.wallet.account);
+    const hasOrder = Boolean(order);
+    const hasSignature = Boolean(order?.signature) || ["authorized", "submitted", "pending", "confirmed", "failed"].includes(order?.status);
+    const paymentSubmitted = Boolean(order?.txHash) && order?.status !== "failed";
+    const paymentConfirmed = order?.status === "confirmed";
+
+    return [
+      {
+        step: "1",
+        title: "Connect",
+        done: hasWallet,
+        copy: hasWallet ? `钱包 ${short(state.wallet.account)}` : "连接 MetaMask 并切到 GOAT Testnet3",
+      },
+      {
+        step: "2",
+        title: "Create",
+        done: hasOrder,
+        copy: hasOrder ? `${order.orderId} 已创建` : "创建预购单，生成支付意图",
+      },
+      {
+        step: "3",
+        title: "Authorize",
+        done: hasSignature,
+        copy: hasSignature ? "EIP-712 授权已完成" : "对订单做签名授权，形成 intent",
+      },
+      {
+        step: "4",
+        title: "Pay",
+        done: paymentSubmitted,
+        copy: order?.status === "failed"
+          ? "支付失败，重新提交链上付款"
+          : paymentSubmitted
+            ? `tx ${short(order.txHash)}`
+            : "发送链上支付交易",
+      },
+      {
+        step: "5",
+        title: "Confirm",
+        done: paymentConfirmed,
+        copy: paymentConfirmed
+          ? `confirmed at block ${order.blockNumber || "--"}`
+          : order?.status === "pending"
+            ? "等待链上确认，刷新状态"
+            : "读取 receipt，完成闭环展示",
+      },
+    ];
+  }
+
+  function renderQuestTrack(targetId, stages) {
+    let activeAssigned = false;
+    $(targetId).innerHTML = stages.map((stage) => {
+      let className = "quest-step";
+      if (stage.done) {
+        className += " done";
+      } else if (!activeAssigned) {
+        className += " active";
+        activeAssigned = true;
+      }
+      return `
+        <article class="${className}" data-step="${escapeHtml(stage.step)}">
+          <strong>${escapeHtml(stage.title)}</strong>
+          <span>${escapeHtml(stage.copy)}</span>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function renderCheckoutBoard() {
+    const profile = computeGamifiedProfile();
+    const plan = currentPlan();
+    const order = currentQuestOrder();
+    const checkoutStages = buildCheckoutStages();
+    const nextStage = checkoutStages.find((stage) => !stage.done);
+
+    $("checkout-season").textContent = order ? `Quest status · ${order.status}` : "Quest checkout live";
+    $("checkout-next").textContent = nextStage ? `Next · ${nextStage.title}` : "All checkout steps cleared";
+    $("checkout-rank").textContent = `Lv.${profile.level} ${profile.rank}`;
+    $("checkout-status-copy").textContent = order
+      ? `当前订单 ${order.orderId}，状态 ${order.status}。${order.status === "confirmed" ? " 现在可以继续展示 agent 身份与长期订阅。" : ""}`
+      : "先连接钱包并创建预购单，让 judge 看到从套餐到支付的完整推进。";
+    $("checkout-xp").textContent = `+${plan.xpReward} XP`;
+    $("checkout-reward").textContent = `${plan.title} 奖励：${plan.perks.slice(0, 2).join("、")}。`;
+    $("checkout-next-unlock").textContent = profile.nextUnlock;
+    $("checkout-next-copy").textContent = nextStage
+      ? nextStage.copy
+      : "本轮支付 quest 已完成，可以继续讲 ERC-8004 身份与订阅运营。";
+    renderQuestTrack("checkout-track", checkoutStages);
+  }
+
   function renderPlans() {
     $("plan-grid").innerHTML = PLANS.map((plan) => `
       <article class="plan ${plan.id === state.selectedPlanId ? "active" : ""}" data-plan-id="${plan.id}">
-        <strong>${escapeHtml(plan.title)} · ${escapeHtml(plan.price)} ${escapeHtml(plan.asset)}</strong>
+        <div class="plan-tier">${escapeHtml(plan.tier)} · +${escapeHtml(plan.xpReward)} XP</div>
+        <strong>${escapeHtml(plan.title)}</strong>
         <p>${escapeHtml(plan.tagline)}</p>
+        <div class="plan-price">
+          <strong>${escapeHtml(plan.price)}</strong>
+          <span>${escapeHtml(plan.asset)} · ${escapeHtml(plan.rarity)}</span>
+        </div>
         <p>${escapeHtml(plan.description)}</p>
+        <ul class="plan-perks">
+          ${plan.perks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ul>
+        <div class="plan-questline">${escapeHtml(plan.questCopy)}</div>
       </article>
     `).join("");
     $("hero-plan").textContent = currentPlan().price;
@@ -1951,6 +2595,7 @@
     renderRecords();
     renderSelectedRecord();
     renderHero();
+    renderCheckoutBoard();
     toast("今日镜像已进入时间线。");
   }
 
@@ -2011,12 +2656,25 @@
   function renderHero() {
     const record = selectedRecord();
     if (!record) return;
+    const profile = computeGamifiedProfile();
     $("hero-score").textContent = record.assessment.score;
     $("hero-focus").textContent = record.assessment.focusTitle;
     $("hero-streak").textContent = consecutiveDays(state.records);
     $("hero-confidence").textContent = `当前模式：${record.assessment.confidence}`;
     $("hero-track").textContent = record.useRing ? "camera+ring" : "camera";
     $("hero-trend").textContent = record.assessment.trend;
+    $("hero-season").textContent = `Season 01 · Recovery Sprint · ${profile.streak} day streak`;
+    $("hero-rank-pill").textContent = `Rank · Lv.${profile.level} ${profile.rank}`;
+    $("hero-next-pill").textContent = `Next · ${profile.nextUnlock}`;
+    $("hero-rank").textContent = profile.rank;
+    $("hero-level-note").textContent = profile.xpToNext
+      ? `距离 ${profile.nextRank} 还差 ${profile.xpToNext} XP。`
+      : "当前赛季已到顶级，可以继续累积更多案例和支付证明。";
+    $("hero-xp").textContent = `${profile.xp} XP`;
+    $("hero-xp-note").textContent = `${profile.records} 条镜像 + ${profile.ringRecords} 条 ring 记录 + ${profile.confirmedOrders} 笔 confirmed payment。`;
+    $("hero-reward").textContent = `+${profile.nextRewardXp} XP`;
+    $("hero-daily-quest").textContent = profile.dailyQuest;
+    renderQuestTrack("hero-quest-track", buildJourneyStages());
   }
 
   async function rpc(method, params = []) {
@@ -2067,6 +2725,8 @@
     }
     await refreshBalances();
     renderAgentIdentityLab();
+    renderHero();
+    renderCheckoutBoard();
     toast("钱包已连接。");
   }
 
@@ -2191,6 +2851,8 @@
     saveAgentLab();
     hydrateAgentLabForm();
     renderAgentIdentityLab();
+    renderHero();
+    renderCheckoutBoard();
     toast("已恢复 sample agent 配置。");
   }
 
@@ -2236,6 +2898,8 @@
     state.currentOrder = order;
     $("order-badge").textContent = `checkout ${order.status}`;
     $("order-json").textContent = JSON.stringify(order, null, 2);
+    renderHero();
+    renderCheckoutBoard();
   }
 
   function upsertOrder(order) {
@@ -2580,6 +3244,8 @@
       state.selectedPlanId = target.getAttribute("data-plan-id");
       renderPlans();
       renderAssetOptions();
+      renderHero();
+      renderCheckoutBoard();
     });
   }
 
@@ -2614,6 +3280,8 @@
       $(id).addEventListener("input", () => {
         collectAgentForm();
         renderAgentIdentityLab();
+        renderHero();
+        renderCheckoutBoard();
       });
     });
 
@@ -2675,6 +3343,11 @@
     renderSelectedRecord();
     renderHero();
     renderOrders();
+    if (state.orders[0]) {
+      setCurrentOrder(state.orders[0]);
+    } else {
+      renderCheckoutBoard();
+    }
     renderAgentIdentityLab();
   }
 
@@ -2684,11 +3357,15 @@
       $("wallet-address").textContent = state.wallet.account ? short(state.wallet.account) : "wallet disconnected";
       refreshBalances().catch(() => {});
       renderAgentIdentityLab();
+      renderHero();
+      renderCheckoutBoard();
     });
     window.ethereum.on("chainChanged", (chainId) => {
       state.wallet.chainId = chainId;
       $("wallet-network").textContent = chainId === GOAT_TESTNET3.chainId ? "GOAT Testnet3" : chainId;
       renderAgentIdentityLab();
+      renderHero();
+      renderCheckoutBoard();
     });
   }
 
