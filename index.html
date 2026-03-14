@@ -1214,6 +1214,109 @@
         <div class="workflow-grid" id="workflow-grid" style="margin-top:12px"></div>
         <div class="workflow-panel" id="workflow-panel" style="margin-top:12px"></div>
       </article>
+
+      <article class="card section" id="agent-section">
+        <div class="section-head">
+          <div>
+            <h3>ERC-8004 Agent Identity Lab</h3>
+            <p>这里把 `Micro Mirror` 的健康 agent 从叙事变成可演示对象：先生成 sample agent metadata，再用 MetaMask 在 GOAT Testnet3 上注册身份，最后按 `agentId` 读取钱包与信誉摘要。</p>
+          </div>
+          <div class="badge mono" id="agent-lab-badge">identity ready</div>
+        </div>
+
+        <div class="mini-grid" style="margin-bottom:14px">
+          <div class="mini-card">
+            <strong>GOAT Testnet3</strong>
+            <span id="agent-network-summary">Chain ID 48816 · RPC https://rpc.testnet3.goat.network</span>
+          </div>
+          <div class="mini-card">
+            <strong>Identity Registry</strong>
+            <span id="agent-identity-registry">0x556089008Fc0a60cD09390Eca93477ca254A5522</span>
+          </div>
+          <div class="mini-card">
+            <strong>Reputation Registry</strong>
+            <span id="agent-reputation-registry">0xd9140951d8aE6E5F625a02F5908535e16e3af964</span>
+          </div>
+        </div>
+
+        <div class="mini-grid" style="margin-bottom:14px">
+          <div class="mini-card">
+            <strong>Observe</strong>
+            <span>agent 读取镜像时间线、sleep / stress / hydration 和可选 ring signal。</span>
+          </div>
+          <div class="mini-card">
+            <strong>Decide</strong>
+            <span>agent 输出中医参照 + 现代医学参照 + 下一周实验方向，而不是只聊天。</span>
+          </div>
+          <div class="mini-card">
+            <strong>Act</strong>
+            <span>agent 后续可用 `x402` 创建订阅订单，用 `ERC-8004` 沉淀身份和信誉。</span>
+          </div>
+        </div>
+
+        <div class="workflow-split">
+          <div class="workflow-column">
+            <div class="field">
+              <label for="agent-name">Agent Name</label>
+              <input id="agent-name" type="text">
+            </div>
+            <div class="field">
+              <label for="agent-description">Agent Description</label>
+              <textarea id="agent-description"></textarea>
+            </div>
+            <div class="field">
+              <label for="agent-capabilities">Capabilities</label>
+              <input id="agent-capabilities" type="text">
+            </div>
+            <div class="field">
+              <label for="agent-endpoint">Service Endpoint</label>
+              <input id="agent-endpoint" type="text">
+            </div>
+            <div class="field">
+              <label for="agent-uri">Generated Agent URI</label>
+              <textarea id="agent-uri" spellcheck="false"></textarea>
+            </div>
+            <div class="order-actions">
+              <button class="btn secondary" id="agent-use-sample">恢复 sample agent</button>
+              <button class="btn primary" id="agent-register">注册 ERC-8004 Agent</button>
+              <a class="btn" id="agent-dashboard-link" href="https://goat-hackathon-2026.vercel.app/" target="_blank" rel="noreferrer">打开官方 Dashboard</a>
+              <a class="btn" id="agent-download-link" href="#" download="micro-mirror-agent.json">下载 metadata JSON</a>
+            </div>
+            <p class="helper">说明：当前实现会把 sample agent metadata 生成 `data:` URI，然后直接调用 Identity Registry 的 `register(string agentURI)`。Gas fee 属于链上网络费用，不是平台收入。</p>
+            <pre class="code mono" id="agent-manifest-json">sample agent metadata</pre>
+          </div>
+
+          <div class="workflow-column">
+            <div class="field two">
+              <div>
+                <label for="agent-id-input">Agent ID</label>
+                <input id="agent-id-input" type="text" placeholder="注册成功后填 agentId">
+              </div>
+              <div>
+                <label for="agent-client-addresses">Client Address Filters</label>
+                <input id="agent-client-addresses" type="text" placeholder="留空则优先用当前钱包">
+              </div>
+            </div>
+            <div class="field two">
+              <div>
+                <label for="agent-tag1">Reputation Tag 1</label>
+                <input id="agent-tag1" type="text">
+              </div>
+              <div>
+                <label for="agent-tag2">Reputation Tag 2</label>
+                <input id="agent-tag2" type="text">
+              </div>
+            </div>
+            <div class="order-actions">
+              <button class="btn" id="agent-read-wallet">读取 linked wallet</button>
+              <button class="btn" id="agent-read-reputation">读取 reputation</button>
+              <button class="btn" id="agent-read-clients">读取 feedback clients</button>
+            </div>
+            <p class="helper" id="agent-role-note">这个面板展示的是 `register_agent`、`get_agent_wallet`、`get_reputation`、`get_clients` 这些本地 `agentkit` 已经封装的 ERC-8004 能力在产品里的最小演示接法。</p>
+            <pre class="code mono" id="agent-output">等待注册或查询。</pre>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 </main>
@@ -1240,8 +1343,14 @@
 
   const RPC_URL = "https://rpc.testnet3.goat.network";
   const EXPLORER = "https://explorer.testnet3.goat.network";
+  const GOAT_DASHBOARD_URL = "https://goat-hackathon-2026.vercel.app/";
+  const ERC8004_REGISTRY = {
+    identity: "0x556089008Fc0a60cD09390Eca93477ca254A5522",
+    reputation: "0xd9140951d8aE6E5F625a02F5908535e16e3af964",
+  };
   const RECORDS_KEY = "micro-mirror-records-v1";
   const ORDERS_KEY = "micro-mirror-orders-v1";
+  const AGENT_LAB_KEY = "micro-mirror-agent-lab-v1";
   const PLANS = [
     {
       id: "daily",
@@ -1279,6 +1388,14 @@
     "function transfer(address to, uint256 amount) returns (bool)",
     "function balanceOf(address owner) view returns (uint256)",
   ]);
+  const erc8004Identity = new Interface([
+    "function register(string agentURI) returns (uint256 agentId)",
+    "function getAgentWallet(uint256 agentId) view returns (address)",
+  ]);
+  const erc8004Reputation = new Interface([
+    "function getSummary(uint256 agentId, address[] clientAddresses, string tag1, string tag2) view returns (uint64 count, int128 summaryValue, uint8 summaryValueDecimals)",
+    "function getClients(uint256 agentId) view returns (address[])",
+  ]);
 
   const state = {
     stream: null,
@@ -1292,6 +1409,17 @@
     selectedPlanId: "ring",
     selectedWorkflowId: "ring-checkout",
     selectedSourceIndex: 0,
+    agentLab: loadStorage(AGENT_LAB_KEY, () => ({
+      name: "Micro Mirror Recovery Agent",
+      description: "A health direction agent that turns daily face timeline signals and optional smart ring recovery data into wellness direction with both TCM and modern medical framing.",
+      capabilities: "daily_face_timeline,wellness_direction,smart_ring_subscription,x402_checkout,erc8004_identity",
+      endpoint: `${window.location.origin}${window.location.pathname}#agent-section`,
+      agentId: "",
+      clientAddresses: "",
+      tag1: "recovery_signal_quality",
+      tag2: "camera_ring_alignment",
+      lastOutput: "等待注册或查询。",
+    })),
     currentOrder: null,
   };
 
@@ -1306,6 +1434,110 @@
     '"': "&quot;",
     "'": "&#39;",
   }[char]));
+
+  function saveAgentLab() {
+    saveStorage(AGENT_LAB_KEY, state.agentLab);
+  }
+
+  function utf8ToDataUri(text) {
+    const bytes = new TextEncoder().encode(text);
+    let binary = "";
+    bytes.forEach((byte) => {
+      binary += String.fromCharCode(byte);
+    });
+    return `data:application/json;base64,${btoa(binary)}`;
+  }
+
+  function parseList(value) {
+    return value
+      .split(/[,\n]/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  function isAddress(value) {
+    return /^0x[a-fA-F0-9]{40}$/.test(value);
+  }
+
+  function setAgentOutput(payload) {
+    const text = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
+    state.agentLab.lastOutput = text;
+    saveAgentLab();
+    $("agent-output").textContent = text;
+  }
+
+  function hydrateAgentLabForm() {
+    $("agent-name").value = state.agentLab.name;
+    $("agent-description").value = state.agentLab.description;
+    $("agent-capabilities").value = state.agentLab.capabilities;
+    $("agent-endpoint").value = state.agentLab.endpoint;
+    $("agent-id-input").value = state.agentLab.agentId;
+    $("agent-client-addresses").value = state.agentLab.clientAddresses;
+    $("agent-tag1").value = state.agentLab.tag1;
+    $("agent-tag2").value = state.agentLab.tag2;
+    $("agent-output").textContent = state.agentLab.lastOutput || "等待注册或查询。";
+  }
+
+  function collectAgentForm() {
+    state.agentLab.name = $("agent-name").value.trim() || "Micro Mirror Recovery Agent";
+    state.agentLab.description = $("agent-description").value.trim();
+    state.agentLab.capabilities = $("agent-capabilities").value.trim();
+    state.agentLab.endpoint = $("agent-endpoint").value.trim();
+    state.agentLab.agentId = $("agent-id-input").value.trim();
+    state.agentLab.clientAddresses = $("agent-client-addresses").value.trim();
+    state.agentLab.tag1 = $("agent-tag1").value.trim();
+    state.agentLab.tag2 = $("agent-tag2").value.trim();
+    saveAgentLab();
+  }
+
+  function buildAgentManifest() {
+    const capabilities = parseList(state.agentLab.capabilities);
+    return {
+      name: state.agentLab.name,
+      description: state.agentLab.description,
+      capabilities,
+      linkedWallets: state.wallet.account ? [state.wallet.account] : [],
+      endpoint: state.agentLab.endpoint,
+      product: "Micro Mirror",
+      agentRole: {
+        observe: "Read camera timeline and optional ring signals.",
+        decide: "Generate dual-framing wellness direction and next actions.",
+        act: "Trigger subscription checkout and later accumulate on-chain trust.",
+      },
+      monetization: [
+        "mirror_daily_subscription",
+        "smart_ring_preorder",
+        "quarterly_review_upgrade",
+      ],
+      network: {
+        chainName: GOAT_TESTNET3.chainName,
+        chainId: 48816,
+        rpcUrl: RPC_URL,
+        identityRegistry: ERC8004_REGISTRY.identity,
+        reputationRegistry: ERC8004_REGISTRY.reputation,
+      },
+      createdAt: new Date().toISOString(),
+      onChainRegistry: "ERC-8004",
+    };
+  }
+
+  function renderAgentIdentityLab() {
+    collectAgentForm();
+    const manifest = buildAgentManifest();
+    const manifestJson = JSON.stringify(manifest, null, 2);
+    const agentUri = utf8ToDataUri(manifestJson);
+    $("agent-uri").value = agentUri;
+    $("agent-manifest-json").textContent = manifestJson;
+    $("agent-network-summary").textContent = `Chain ID 48816 · RPC ${RPC_URL}`;
+    $("agent-identity-registry").textContent = ERC8004_REGISTRY.identity;
+    $("agent-reputation-registry").textContent = ERC8004_REGISTRY.reputation;
+    $("agent-dashboard-link").href = GOAT_DASHBOARD_URL;
+    $("agent-download-link").href = agentUri;
+    $("agent-download-link").download = "micro-mirror-agent.json";
+    $("agent-role-note").textContent = state.wallet.account
+      ? `当前连接钱包 ${short(state.wallet.account)}。注册时它会成为 agent 的 owner / linked wallet。`
+      : "连接钱包后，sample metadata 里的 linkedWallets 会自动带上当前地址。";
+  }
 
   function toast(message) {
     const el = document.createElement("div");
@@ -1834,7 +2066,132 @@
       $("treasury-address").value = state.wallet.account;
     }
     await refreshBalances();
+    renderAgentIdentityLab();
     toast("钱包已连接。");
+  }
+
+  function readAgentId() {
+    const value = $("agent-id-input").value.trim();
+    if (!/^\d+$/.test(value)) {
+      throw new Error("Agent ID 需要是数字。");
+    }
+    state.agentLab.agentId = value;
+    saveAgentLab();
+    return value;
+  }
+
+  function clientFilterAddresses() {
+    const raw = $("agent-client-addresses").value.trim();
+    const candidates = raw ? parseList(raw) : (state.wallet.account ? [state.wallet.account] : []);
+    if (candidates.some((value) => !isAddress(value))) {
+      throw new Error("Client address filters 里有地址格式不合法。");
+    }
+    return candidates;
+  }
+
+  async function registerAgentIdentity() {
+    if (!window.ethereum) throw new Error("MetaMask not found");
+    if (!state.wallet.account) {
+      await connectWallet();
+    } else {
+      await switchToGoat();
+    }
+
+    renderAgentIdentityLab();
+    const agentURI = $("agent-uri").value.trim();
+    if (!agentURI) throw new Error("Agent URI 不能为空。");
+
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [{
+        from: state.wallet.account,
+        to: ERC8004_REGISTRY.identity,
+        value: "0x0",
+        data: erc8004Identity.encodeFunctionData("register", [agentURI]),
+      }],
+    });
+
+    setAgentOutput({
+      action: "erc8004.register_agent",
+      network: GOAT_TESTNET3.chainName,
+      identityRegistry: ERC8004_REGISTRY.identity,
+      linkedWallet: state.wallet.account,
+      txHash,
+      explorerUrl: `${EXPLORER}/tx/${txHash}`,
+      note: "交易确认后，请在 GOAT dashboard 或 explorer 中拿到 agentId，再回来读取 linked wallet / reputation / clients。",
+    });
+    toast(`ERC-8004 注册交易已提交：${short(txHash)}`);
+  }
+
+  async function readAgentWalletFromChain() {
+    const agentId = readAgentId();
+    const raw = await rpc("eth_call", [{
+      to: ERC8004_REGISTRY.identity,
+      data: erc8004Identity.encodeFunctionData("getAgentWallet", [BigInt(agentId)]),
+    }, "latest"]);
+    const [wallet] = erc8004Identity.decodeFunctionResult("getAgentWallet", raw);
+    setAgentOutput({
+      action: "erc8004.get_agent_wallet",
+      agentId,
+      wallet: String(wallet),
+      identityRegistry: ERC8004_REGISTRY.identity,
+    });
+  }
+
+  async function readAgentReputationFromChain() {
+    const agentId = readAgentId();
+    const tag1 = $("agent-tag1").value.trim();
+    const tag2 = $("agent-tag2").value.trim();
+    const clients = clientFilterAddresses();
+    const raw = await rpc("eth_call", [{
+      to: ERC8004_REGISTRY.reputation,
+      data: erc8004Reputation.encodeFunctionData("getSummary", [BigInt(agentId), clients, tag1, tag2]),
+    }, "latest"]);
+    const [count, summaryValue, summaryValueDecimals] = erc8004Reputation.decodeFunctionResult("getSummary", raw);
+    setAgentOutput({
+      action: "erc8004.get_reputation",
+      agentId,
+      tag1,
+      tag2,
+      clientAddresses: clients,
+      count: String(count),
+      summaryValue: String(summaryValue),
+      summaryValueDecimals: Number(summaryValueDecimals),
+      reputationRegistry: ERC8004_REGISTRY.reputation,
+    });
+  }
+
+  async function readAgentClientsFromChain() {
+    const agentId = readAgentId();
+    const raw = await rpc("eth_call", [{
+      to: ERC8004_REGISTRY.reputation,
+      data: erc8004Reputation.encodeFunctionData("getClients", [BigInt(agentId)]),
+    }, "latest"]);
+    const [clients] = erc8004Reputation.decodeFunctionResult("getClients", raw);
+    setAgentOutput({
+      action: "erc8004.get_clients",
+      agentId,
+      clients: (clients || []).map(String),
+      reputationRegistry: ERC8004_REGISTRY.reputation,
+    });
+  }
+
+  function resetSampleAgent() {
+    state.agentLab = {
+      name: "Micro Mirror Recovery Agent",
+      description: "A health direction agent that turns daily face timeline signals and optional smart ring recovery data into wellness direction with both TCM and modern medical framing.",
+      capabilities: "daily_face_timeline,wellness_direction,smart_ring_subscription,x402_checkout,erc8004_identity",
+      endpoint: `${window.location.origin}${window.location.pathname}#agent-section`,
+      agentId: "",
+      clientAddresses: state.wallet.account || "",
+      tag1: "recovery_signal_quality",
+      tag2: "camera_ring_alignment",
+      lastOutput: "等待注册或查询。",
+    };
+    saveAgentLab();
+    hydrateAgentLabForm();
+    renderAgentIdentityLab();
+    toast("已恢复 sample agent 配置。");
   }
 
   async function refreshBalances() {
@@ -2243,6 +2600,30 @@
     });
   }
 
+  function bindAgentIdentityLab() {
+    [
+      "agent-name",
+      "agent-description",
+      "agent-capabilities",
+      "agent-endpoint",
+      "agent-id-input",
+      "agent-client-addresses",
+      "agent-tag1",
+      "agent-tag2",
+    ].forEach((id) => {
+      $(id).addEventListener("input", () => {
+        collectAgentForm();
+        renderAgentIdentityLab();
+      });
+    });
+
+    $("agent-use-sample").addEventListener("click", resetSampleAgent);
+    $("agent-register").addEventListener("click", () => registerAgentIdentity().catch((error) => toast(error.message)));
+    $("agent-read-wallet").addEventListener("click", () => readAgentWalletFromChain().catch((error) => toast(error.message)));
+    $("agent-read-reputation").addEventListener("click", () => readAgentReputationFromChain().catch((error) => toast(error.message)));
+    $("agent-read-clients").addEventListener("click", () => readAgentClientsFromChain().catch((error) => toast(error.message)));
+  }
+
   function bindEvents() {
     $("start-camera").addEventListener("click", () => startCamera().catch((error) => toast(error.message)));
     $("stop-camera").addEventListener("click", stopCamera);
@@ -2281,10 +2662,12 @@
     bindTimelineClicks();
     bindPlanClicks();
     bindAgentkitStudio();
+    bindAgentIdentityLab();
     bindRanges();
   }
 
   function initialRender() {
+    hydrateAgentLabForm();
     renderPlans();
     renderAssetOptions();
     updateRingInputs();
@@ -2292,6 +2675,7 @@
     renderSelectedRecord();
     renderHero();
     renderOrders();
+    renderAgentIdentityLab();
   }
 
   if (window.ethereum) {
@@ -2299,10 +2683,12 @@
       state.wallet.account = accounts[0] || null;
       $("wallet-address").textContent = state.wallet.account ? short(state.wallet.account) : "wallet disconnected";
       refreshBalances().catch(() => {});
+      renderAgentIdentityLab();
     });
     window.ethereum.on("chainChanged", (chainId) => {
       state.wallet.chainId = chainId;
       $("wallet-network").textContent = chainId === GOAT_TESTNET3.chainId ? "GOAT Testnet3" : chainId;
+      renderAgentIdentityLab();
     });
   }
 

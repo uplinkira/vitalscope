@@ -44,6 +44,10 @@
   - 三条产品化工作流
   - 对应 action 列表
   - 本地 `agentkit/` 源码片段预览
+- ERC-8004 Agent Identity Lab：
+  - sample agent metadata / `agentURI`
+  - MetaMask 注册 `register_agent`
+  - 按 `agentId` 读取 wallet / reputation / clients
 
 ## 可直接复制的材料
 - 项目一句话概括与 5 分钟演讲稿：
@@ -65,6 +69,14 @@
   - 对应现场钱包支付演示网络
 - `AgentKit catalog`：
   - 对应页面里的 `GOAT / AgentKit Infra Snapshot`
+
+## 当前网络口径
+- `GOAT Testnet3`
+  - RPC: `https://rpc.testnet3.goat.network`
+  - Chain ID: `48816`
+- `GOAT mainnet`
+  - RPC: `https://rpc.goat.network`
+  - Chain ID: `2345`
 
 ## 最终提交方向
 - `1+requirement.md` 中的 `Submission link`

@@ -63,3 +63,89 @@
   - 我们用 `x402` 做智能戒指预购支付闭环，用 `x402-merchant` 对接订单和商户能力，用 `ERC-8004` 作为未来健康分析 agent 的链上身份层，再用 `GOAT Testnet3` 做现场支付演示，所以这不是一个纯概念页，而是已经对齐主办方基础设施的健康订阅 MVP。
 - English:
   - We use `x402` for the smart ring preorder payment flow, `x402-merchant` for merchant and order operations, `ERC-8004` as the future on-chain identity layer for our health agent, and `GOAT Testnet3` for the live payment demo, so this is not just a concept page but a health subscription MVP aligned with the organizer's infrastructure.
+
+## 答辩 Q&A
+
+### Q1. 现在你们的 `MetaMask` 是怎么利用 `x402` 和 `ERC-8004` 的？
+- 短答版：
+  - 当前 `MetaMask` 在 demo 里承担两类动作：
+    - 一类是 `x402` 方向的支付动作
+    - 一类是 `ERC-8004` 方向的 agent 身份动作
+- 更准确地说：
+  - 在支付这边，当前页面已经做了 GOAT Testnet3 钱包连接、EIP-712 风格的订单授权签名、以及链上支付提交流程。
+  - 这和 `x402` 的底层思路是一致的：先创建 payment intent，再请求签名授权，再执行转账，再看支付状态。
+  - 在 agent 身份这边，我们现在新增了 `ERC-8004 Agent Identity Lab`，可以用 `MetaMask` 直接在 GOAT Testnet3 上发起 `register(string agentURI)`，并按 `agentId` 读取 linked wallet、reputation summary、feedback clients。
+- 需要诚实强调的边界：
+  - 当前 MVP 已经把 `MetaMask + GOAT Testnet3 + x402 叙事 + ERC-8004 注册演示` 串起来了。
+  - 但 `x402 merchant gateway` 和完整的 `ERC-8004` 信誉闭环还没有全部接成真实后端服务。
+- 如果评委追问“那 agentkit 真正起作用在哪里”：
+  - `x402` 负责把订购和订阅支付拆成 agent 可编排的支付状态机。
+  - `ERC-8004` 负责把健康分析服务变成可注册、可追踪、可积累信誉的链上 agent。
+  - `MetaMask` 是用户完成授权、支付和身份注册的签名执行端。
+
+### Q2. 你们的付费点是什么？Gas fee 给谁？订购服务界面会涉及什么？每天限额的中西医回复算不算付费点？
+- 先分清两种钱：
+  - 第一种是业务收入
+    - 这是用户付给 `Micro Mirror` 产品方的订购费或订阅费
+  - 第二种是 gas fee
+    - 这是用户在链上发交易时支付给网络验证者 / 出块者的费用
+    - 不是直接给 app 创建者
+- 当前 MVP 里已经可见的业务付费点有三层：
+  - `Mirror Daily`
+    - 纯软件订阅
+    - 对应每日镜像、时间线、双参考报告、每周行动实验
+  - `Mirror Ring Beta`
+    - 智能戒指预购 + 90 天订阅
+    - 对应 camera + ring 的多模态恢复观察
+  - `Mirror Ring Plus`
+    - 戒指 + 季度复盘
+    - 对应更深的长期健康管理服务
+- 订购服务界面会涉及的内容包括：
+  - 计划选择
+  - 支付资产选择
+  - 收款钱包
+  - 戒指尺寸
+  - 收货城市
+  - 订单说明
+  - 签名授权
+  - 链上支付
+  - 订单状态刷新
+- “每天限额的中西医回复”可以作为后续很自然的付费点：
+  - 免费版：
+    - 只给趋势卡片和基础保健方向
+  - 订阅版：
+    - 给更完整的双参考解释和更高频的行动建议
+  - 高阶版：
+    - 给 ring 数据联动、季度复盘和长期追踪
+- 所以最稳妥的商业表述是：
+  - 我们的收入来自硬件预购 + 软件订阅 + 长期健康服务升级
+  - gas fee 只是链上执行成本，不是平台营收
+
+### Q3. 这个项目里的 agent 到底怎么发挥作用？原理是什么？
+- 这里的 agent 不是一个“陪聊机器人”，而是一个有输入、有推理目标、有动作输出的服务单元。
+- 它的工作可以拆成三步：
+  - `Observe`
+    - 读取每日镜像时间线、sleep / stress / hydration、以及可选的 ring 数据
+  - `Decide`
+    - 生成一个趋势性健康方向
+    - 同时输出中医理论参照和现代医学报告式参照
+    - 再给出下一周可执行的行动实验
+  - `Act`
+    - 当用户需要更高精度数据时，agent 把建议升级成订购或订阅动作
+    - 用 `x402` 把订单、支付、状态查询这些动作标准化
+    - 用 `ERC-8004` 把 agent 自己注册成可追踪的链上身份
+- 为什么这很重要：
+  - 因为健康类产品最难的是“可信”和“连续”
+  - 单次建议很容易流于内容页
+  - 但当一个 agent 有身份、有版本、有支付、有信誉记录时，它就更像一个长期服务系统
+
+### Q4. GOAT Testnet3 网络参数怎么说才不会说错？
+- 当前我们在 demo 中使用的是：
+  - `GOAT Testnet3`
+  - RPC: `https://rpc.testnet3.goat.network`
+  - Chain ID: `48816`
+- 要注意区分：
+  - `2345` 是 `GOAT mainnet`
+  - `48816` 才是 `GOAT Testnet3`
+- 如果现场直接走官方 dashboard，建议统一说：
+  - “我们当前演示用的是 GOAT Testnet3，页面和 agent 注册面板都已经按 testnet 参数配置好了。”

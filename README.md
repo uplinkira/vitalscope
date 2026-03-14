@@ -12,6 +12,10 @@
   - `AgentKit Workflow Studio`
     - 直接展示 `x402`、`x402-merchant`、`ERC-8004`、`wallet` 在 `Micro Mirror` 场景里的工作流
     - 可点击查看动作列表和本地 `agentkit/` 源码片段
+  - `ERC-8004 Agent Identity Lab`
+    - 生成 sample agent metadata JSON / `agentURI`
+    - 用 MetaMask 在 GOAT Testnet3 上发起 `register(string agentURI)`
+    - 按 `agentId` 读取 linked wallet / reputation / feedback clients
 - `generated/agentkit-catalog.json`
   - 本地 `agentkit` 扫描出的能力清单，用于 hackathon judge 讲解
 - `generated/agentkit-demo.json`
@@ -40,6 +44,8 @@ node scripts/generate-agentkit-demo-assets.mjs
 
 ## 当前 GitHub 仓库
 - `https://github.com/uplinkira/micro-mirror.git`
+- 已绑定部署仓库：
+  - `https://github.com/uplinkira/micro-mirror-deploy.git`
 
 ## Vercel 部署
 - 已补 `vercel.json`
