@@ -1,15 +1,13 @@
 # Micro Mirror
 
-Micro Mirror is a preventive wellness prototype that turns a daily face photo into a longitudinal health direction signal, then connects that signal to an upgrade path that includes smart ring data, on-chain agent identity, and GOAT-based checkout.
+Micro Mirror is a preventive wellness product prototype that turns a daily face photo into a longitudinal health direction signal, then extends that signal with smart ring data, agent identity, and GOAT-based payment flows.
 
-## Why This Repo Exists
+## Team
 
-This project was created for the Shenzhen onsite hackathon sprint listed at:
-- `https://luma.com/bwro4uva`
+- `uplinkira`
+- `2` collaborating bioinformatics graduate researchers from the Chinese Academy of Sciences
 
-Based on the public event page, the sprint was hosted by `Sophia Li`, `GOAT Network`, and `OpenBuild`, framed as a high-intensity build session around `OpenClaw`, `GOAT`, `x402`, `ERC-8004`, and the `GOAT Bitcoin L2 Testnet`, with an onsite build window from `14:30` to `17:30` inside a four-hour event block.
-
-Micro Mirror was taken from zero to a working MVP in Shenzhen within roughly that three-hour build window, in collaboration with two current bioinformatics graduate student co-authors from the Chinese Academy of Sciences. The result is intentionally scoped as a fast, demo-ready product thesis rather than a finished medical product.
+This repository is the long-term product repository and source of truth for the project.
 
 ## Product Thesis
 
@@ -26,14 +24,14 @@ The upgrade path adds a smart ring so the product can combine visual signals wit
 - resting heart rate
 - sleep recovery
 
-## What The MVP Includes
+## Current MVP
 
-- Daily camera capture or image upload fallback
-- Local timeline of daily mirror records
-- Dual-reference report:
+- daily camera capture or image upload fallback
+- local timeline of daily mirror records
+- dual-reference report:
   - TCM-inspired interpretation
   - modern medical-style interpretation
-- Smart ring preorder flow
+- smart ring preorder flow
 - GOAT Testnet3 payment flow with MetaMask
 - `AgentKit Workflow Studio`
   - maps local `agentkit/` modules to product workflows
@@ -42,7 +40,7 @@ The upgrade path adds a smart ring so the product can combine visual signals wit
   - generates sample agent metadata
   - registers an agent from the browser
   - reads linked wallet, reputation summary, and client list
-- Gamified presentation layer for demo clarity:
+- gamified demo layer:
   - `Season`
   - `Rank`
   - `Quest XP`
@@ -66,7 +64,7 @@ In Micro Mirror, the agent is not just a chatbot wrapper. It has a concrete job 
 
 ## Why GOAT / AgentKit Is Central
 
-This repo was shaped to make the hackathon integration legible:
+This repository keeps the product direction close to the infrastructure that the team wants to keep building on:
 
 - `x402`
   - payment intent and settlement framing for the smart ring preorder path
@@ -77,9 +75,24 @@ This repo was shaped to make the hackathon integration legible:
 - `wallet`
   - browser wallet connectivity for the live demo
 
-The repo also includes generated assets that make those integrations visible instead of only described:
+The repository also includes generated assets that make those integrations visible instead of only described:
 - `generated/agentkit-catalog.json`
 - `generated/agentkit-demo.json`
+
+## Repository Role
+
+- Primary source repository:
+  - `https://github.com/uplinkira/micro-mirror.git`
+- Release and deployment mirror:
+  - `https://github.com/uplinkira/micro-mirror-deploy.git`
+
+The recommended long-term workflow is:
+- develop in `micro-mirror`
+- bind Vercel directly to `micro-mirror`
+- keep `micro-mirror-deploy` only as a release archive while the migration finishes
+
+The detailed migration guide lives in:
+- `docs/repo_deploy_workflow_2026.md`
 
 ## Repository Structure
 
@@ -90,9 +103,9 @@ The repo also includes generated assets that make those integrations visible ins
 - `scripts/generate-agentkit-demo-assets.mjs`
   - refreshes AgentKit-derived demo assets
 - `docs/pitch_micro_mirror.md`
-  - one-line summary and pitch script
+  - one-line summary, pitch script, and judge Q&A
 - `docs/repo_deploy_workflow_2026.md`
-  - GitHub, Vercel, token, and single-repo migration guide
+  - GitHub, Vercel, token, pricing, and single-repo workflow guide
 
 ## Local Run
 
@@ -111,31 +124,9 @@ cd D+20260314+goat/micro-mirror
 node scripts/generate-agentkit-demo-assets.mjs
 ```
 
-## GitHub And Deployment
-
-- Primary source repository:
-  - `https://github.com/uplinkira/micro-mirror.git`
-- Current Vercel-connected mirror repository:
-  - `https://github.com/uplinkira/micro-mirror-deploy.git`
-
-For the current hackathon phase, the recommended workflow is:
-- develop in `micro-mirror`
-- push stable snapshots to `micro-mirror-deploy` when you want to refresh production
-
-The detailed migration path for moving to a single Vercel-bound main repo is documented in:
-- `docs/repo_deploy_workflow_2026.md`
-
-## Submission Context
-
-This repo was prepared as a hackathon delivery repository aligned with:
-- `D+20260314+goat/1+requirement.md`
-
-Final submission entry referenced there:
-- `https://julieshi.notion.site/8b33110376804173b6ce1c95ee4a25c6`
-
 ## Medical Scope
 
-Micro Mirror is a hackathon MVP and should not be treated as a diagnostic system, a regulated medical device, or a substitute for professional medical advice.
+Micro Mirror is a product prototype and should not be treated as a diagnostic system, a regulated medical device, or a substitute for professional medical advice.
 
 ## License
 
@@ -149,7 +140,3 @@ Why this choice:
 
 Important note:
 - the `Micro Mirror` product name, branding, pitch framing, and other unlicensed trademarks remain reserved to their respective owners under the terms of `Apache-2.0`
-
-## Collaboration Note
-
-This repository documents a zero-to-one hackathon build. It should be read as an early product prototype, a research-inspired design direction, and a commercialization starting point developed under severe time constraints rather than a final production system.

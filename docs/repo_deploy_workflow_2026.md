@@ -2,85 +2,170 @@
 
 ## TL;DR
 
-If you want the most stable hackathon workflow right now:
-- keep `micro-mirror` as the main development repository
-- keep `micro-mirror-deploy` as the production mirror
-- only sync to `micro-mirror-deploy` when you want to refresh the live Vercel demo
-
-If you want the cleaner long-term 2026 setup:
-- keep only `micro-mirror`
-- bind Vercel directly to `micro-mirror`
+The target end state is:
+- keep only `micro-mirror` as the active main repository
+- bind Vercel directly to `https://github.com/uplinkira/micro-mirror`
 - let pushes to `main` trigger production deployment automatically
 
-This file now also includes the old `VERCEL_TOKEN` guide, so you do not need a separate `vercel_token_guide.md`.
+Until that cutover is finished:
+- `micro-mirror` stays the source of truth
+- `micro-mirror-deploy` stays a release mirror and deployment archive
 
-## Current Recommended Mode For This Team
+This file also absorbs the old `VERCEL_TOKEN` guide, so no separate token manual is needed.
 
-### Why not only edit the Vercel repo
+## What Vercel Is Actually Doing
 
-Do not use `micro-mirror-deploy` as the main coding repo.
+For this project, Vercel is not “running a big server” for us. It is mainly doing four things:
 
-If you only edit the deployment repo:
-- Vercel updates
-- but your real source history drifts
-- future development becomes confusing
+1. Git integration
+- Vercel connects to the GitHub repository
+- when you push to a connected branch, it starts a new deployment
 
-The safest current rule is:
-- `micro-mirror` = source of truth
-- `micro-mirror-deploy` = release mirror
+2. Build and package
+- Vercel takes the repository snapshot for that commit
+- it runs the configured build or static export flow
+- for the current Micro Mirror MVP, that is effectively a static front-end deployment
 
-### Current Best Practice
+3. Preview vs production routing
+- pushes on the production branch become production deployments
+- pull requests and non-production branches can get preview deployments
 
-Daily development:
-1. edit `micro-mirror`
-2. verify locally
-3. commit and push `micro-mirror`
+4. Hosted delivery
+- Vercel stores the deployment output and serves the site from its platform edge network
+- for a static site like this, that means the HTML, CSS, JS, and assets can be delivered without us renting a separate traditional server first
 
-When you want a live demo refresh:
-1. sync `micro-mirror` into `micro-mirror-deploy`
-2. commit and push `micro-mirror-deploy`
-3. wait for Vercel auto-deploy
+In short:
+- GitHub provides versioned source code
+- Vercel turns a commit into a hosted deployment URL
+
+## Why We Can Run It For Free Right Now
+
+The current MVP is a very good fit for Vercel `Hobby` because:
+
+- the app is mostly static HTML, CSS, and browser-side JavaScript
+- camera access happens in the browser
+- the wallet interaction is client-side
+- there is no heavy always-on backend in this repository
+- current expected traffic is hackathon-demo level rather than production-scale consumer traffic
+
+That combination keeps the project light enough that the free plan is usually sufficient for:
+- personal testing
+- judge demos
+- portfolio-style product preview
+
+## Important Boundary: Why “Free” Does Not Mean “Unlimited”
+
+According to Vercel's current plan documentation:
+- `Hobby` is free
+- `Hobby` is intended for personal, non-commercial use
+
+So the reason this works without paying right now is:
+- the app is lightweight
+- the usage is still small
+- the project is still at demo / prototype stage
+
+It does not mean:
+- the plan is appropriate forever
+- the plan is the right choice for a commercial launch
+
+## Current Free-Plan Limits That Matter To This Team
+
+The exact quota table can change, so always re-check the official Vercel pricing pages before a high-stakes release. For planning purposes, the important practical limits are:
+
+- `Hobby` is for personal, non-commercial use
+- included usage is lower than paid plans
+- collaboration, governance, and advanced security are more limited than on paid tiers
+- once the project becomes a real product with multiple operators, more traffic, or revenue activity, `Pro` becomes the safer default
+
+For this project, the biggest triggers are:
+- multiple collaborators managing production together
+- meaningful public traffic growth
+- adding heavier backend functions or data services
+- moving from hackathon / prototype status into real commercial operations
+
+## How Vercel Charges When You Upgrade
+
+At the time of writing, Vercel publicly lists:
+- `Hobby`
+  - free
+- `Pro`
+  - `$20` per user per month
+  - plus additional usage beyond what is included in the plan
+- `Enterprise`
+  - custom pricing
+
+This means the paid model is not just “one flat subscription forever”.
+
+The cost structure is:
+- a base team plan
+- plus usage-based expansion when you exceed included resources on paid tiers
+
+For Micro Mirror, the practical reading is:
+- free is fine for the current static demo
+- `Pro` is the expected next step for team collaboration and productization
+
+## When This Team Should Upgrade To `Pro`
+
+Upgrade when any of these become true:
+
+- the project is no longer just a personal or hackathon prototype
+- the team wants normal multi-person production collaboration
+- the deployment starts representing an active commercial or quasi-commercial product
+- you add server-side features that create sustained usage
+- you need stronger logs, security controls, or operational guarantees
+
+## Best 2026 Repository Strategy
+
+The cleanest long-term setup is:
+- one active repo: `micro-mirror`
+- one production branch: `main`
+- one Vercel project connected directly to that repo
+
+Why this is better:
+- no repo drift
+- no manual sync step before each release
+- cleaner issue tracking and commit history
+- easier onboarding for future collaborators
 
 ## What “Single Main Repo Bound To Vercel” Means
 
-In the cleaner long-term setup:
-- `micro-mirror` becomes the only active repo
-- Vercel connects directly to `https://github.com/uplinkira/micro-mirror`
-- `main` becomes the production branch
-- future pushes to `main` deploy automatically
-- pull requests can produce preview deployments
+In the target setup:
+- `micro-mirror` becomes the only development repository
+- Vercel connects directly to `uplinkira/micro-mirror`
+- pushing to `main` creates the production deployment
+- pull requests or feature branches can create preview deployments
 
-This is the 2026-default pattern because it reduces:
-- repo drift
-- manual sync work
-- release mistakes
+Then `micro-mirror-deploy` becomes optional:
+- archive it
+- keep it read-only as historical release evidence
+- delete it later after the team fully stabilizes the new workflow
 
 ## How To Move Vercel From `micro-mirror-deploy` To `micro-mirror`
 
 There are two practical ways.
 
-## Path A: Create a New Vercel Project From `micro-mirror`
+## Path A: Create A New Vercel Project From `micro-mirror`
 
-This is the cleanest and safest path.
+This is the cleanest and lowest-risk path.
 
 1. Open:
    - `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
 2. Log in to Vercel
 3. Import the `micro-mirror` repository
 4. Keep the root directory as `.`
-5. Because this repo is a static site, most cases can keep default settings
-6. Deploy
+5. Because this repo is a static site, default settings are usually enough
+6. Click `Deploy`
 7. After the first deploy, set:
    - Production Branch = `main`
 8. Confirm that future pushes to `main` deploy automatically
 
 Use this path if:
-- you do not care about preserving the old Vercel project identity
-- you want the simplest migration with the lowest risk
+- you do not need to preserve the current Vercel project shell
+- you want the simplest migration
 
-## Path B: Rebind an Existing Vercel Project To `micro-mirror`
+## Path B: Rebind An Existing Vercel Project To `micro-mirror`
 
-Use this if you want to keep the existing Vercel project and just change the connected Git repository.
+Use this if you want to keep the current Vercel project and swap the connected Git repository.
 
 1. Open the existing Vercel project
 2. Go to:
@@ -96,31 +181,17 @@ Use this if you want to keep the existing Vercel project and just change the con
 8. Verify that the deployment now comes from the main repo rather than `micro-mirror-deploy`
 
 Use this path if:
-- you want to preserve the same Vercel project shell
-- you want to keep the existing domain and project settings with minimal disruption
+- you want to preserve the same project shell, domain, or settings
 
-## After The Switch
-
-Once Vercel is directly bound to `micro-mirror`, your new rule should be:
-- only develop in `micro-mirror`
-- stop treating `micro-mirror-deploy` as active
-
-Then choose one of these cleanup options:
-- archive `micro-mirror-deploy`
-- leave it read-only as a historical release mirror
-- delete it later after the team is comfortable
-
-## How To Verify The Repo Binding Worked
+## How To Verify The Rebinding Worked
 
 After rebinding or creating the new project, check:
 - the Vercel dashboard shows the connected repository as `uplinkira/micro-mirror`
 - pushes to `main` in `micro-mirror` create production deployments
-- pull requests or non-production branches create preview deployments
+- non-production branches or pull requests create preview deployments
 - the live page matches the latest commit from `micro-mirror`
 
-## Vercel Token Guide, Merged Here
-
-## Fastest Path If You Just Need A `vercel.app`
+## Fastest Path If You Only Need A `vercel.app`
 
 Open:
 - `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
@@ -132,7 +203,7 @@ Then:
 
 ## How To Get `VERCEL_TOKEN`
 
-### Option A: Create an Access Token in the Vercel Dashboard
+### Option A: Create An Access Token In The Vercel Dashboard
 
 1. Log in to `https://vercel.com`
 2. Open your account settings
@@ -183,7 +254,18 @@ cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
 ./node_modules/.bin/vercel git connect
 ```
 
-## Recommended Production Release Steps
+## Recommended Release Steps
+
+### Preferred Long-Term Release Flow
+
+1. Update `micro-mirror`
+2. Verify locally
+3. Commit and push `micro-mirror`
+4. Let Vercel deploy from `micro-mirror`
+
+### Temporary Two-Repo Fallback
+
+Use this only until the Vercel binding is fully moved.
 
 1. Make sure `micro-mirror` is up to date
 
@@ -192,17 +274,22 @@ cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
 git pull
 ```
 
-2. Deploy with token
+2. Sync to the deploy mirror
 
 ```bash
-./node_modules/.bin/vercel --prod --token "$VERCEL_TOKEN"
+rsync -a --exclude '.git' --exclude 'node_modules' \
+/Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror/ \
+/Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror-deploy/
 ```
 
-3. If the CLI asks:
-- `Set up and deploy?` choose `Y`
-- choose the correct personal scope or team
-- if it asks whether to link to an existing project, choose according to your current setup
-- keep the root directory as `.`
+3. Push the deployment mirror
+
+```bash
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror-deploy
+git add .
+git commit -m "deploy latest stable demo"
+git push origin main
+```
 
 ## Local Preview
 
@@ -220,58 +307,15 @@ On macOS:
 open http://127.0.0.1:8000
 ```
 
-## Current Repo Commands
-
-### Main Repo Development
-
-```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
-git add .
-git commit -m "your update"
-git push origin main
-```
-
-### Sync To Deploy Mirror
-
-```bash
-rsync -a --exclude '.git' --exclude 'node_modules' \
-/Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror/ \
-/Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror-deploy/
-```
-
-```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror-deploy
-git add .
-git commit -m "deploy latest stable demo"
-git push origin main
-```
-
-## When It Is Acceptable To Patch The Deploy Repo Directly
-
-Only in an emergency:
-- you are minutes away from a live demo
-- the fix is extremely small
-- you truly cannot wait
-
-If that happens:
-- patch `micro-mirror-deploy`
-- deploy
-- immediately back-port the same change to `micro-mirror`
-
-Otherwise drift is guaranteed.
-
 ## Final Recommendation
 
-Short term:
-- keep the current dual-repo setup because it is already working
+For the current demo stage:
+- free Vercel deployment is acceptable because the app is lightweight and traffic is small
 
-Medium term:
-- stop adding independent edits to the deploy mirror
-
-Long term:
-- bind Vercel directly to `micro-mirror`
-- archive `micro-mirror-deploy`
+For the long-term product stage:
+- the correct structure is one main repository bound directly to Vercel
+- the likely plan tier is `Pro` once the project becomes collaborative or commercial
 
 ## One-Sentence Version
 
-The best 2026 setup for this project is not “edit the Vercel repo forever”, but “move Vercel to the main `micro-mirror` repository and let that repository become the single source of truth.”
+The best 2026 setup for Micro Mirror is: keep `micro-mirror` as the only active repo, bind Vercel directly to it, and treat `micro-mirror-deploy` as a temporary release archive rather than the long-term development home.

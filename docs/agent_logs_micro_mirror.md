@@ -1,3 +1,65 @@
+## 2026-03-15 01:09
+
+### group_repo_positioning_split_and_vercel_principles
+- dialogue_id: `dlg_202603150109_openai_micro_mirror_repo_positioning_split`
+- task_group: `group_repo_positioning_split_and_vercel_principles`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/README.md`
+  - `D+20260314+goat/micro-mirror/docs/repo_deploy_workflow_2026.md`
+  - `D+20260314+goat/micro-mirror/docs/reportRef_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror/docs/result_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror/docs/agent_logs_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror-deploy/README.md`
+  - `D+20260314+goat/micro-mirror-deploy/docs/repo_deploy_workflow_2026.md`
+  - `D+20260314+goat/micro-mirror-deploy/docs/reportRef_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror-deploy/docs/result_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror-deploy/docs/agent_logs_micro_mirror.md`
+  - `ccrVscode/dialogue/prompt_202603150115_micro_mirror_repo_positioning_challenge.md`
+  - `ccrVscode/dialogue/dlg_202603150109_openai_micro_mirror_repo_positioning_split.md`
+  - `ccrVscode/dialogue/dlg_202603150115_gemini_micro_mirror_repo_positioning_challenge.md`
+  - `ccrVscode/docs/target_optimization/conv_202603150109_micro_mirror_repo_positioning_split.md`
+- decision:
+  - 将 `micro-mirror` README 调整为长期项目仓库说明，不再承载黑客松参赛叙事
+  - 将 `micro-mirror-deploy` README 调整为部署镜像与黑客松发布记录说明
+  - 在两边 `docs/repo_deploy_workflow_2026.md` 中补充 Vercel 原理、免费可跑原因、限制与收费模型
+- alternatives:
+  - 两个仓库继续共用同一份 README 叙事
+  - 在主仓库里继续保留完整黑客松背景
+  - 只写“Vercel 免费能跑”，不补使用边界和升级条件
+- divergence:
+  - 选择“主仓库长期化 + 部署仓库存档化 + 官方 Vercel 原理补全”的拆分方案
+- decision_rationale:
+  - 用户明确要求主仓库去掉参赛信息，只保留成员信息
+  - 用户明确要求部署仓库保留 2026-03-14 深圳黑客松背景与获奖情况
+  - 用户还要求在部署攻略里补充 Vercel 为什么免费、限制在哪、收费如何发生
+- verification:
+  - `sed -n '1,240p' README.md`
+  - `sed -n '1,320p' docs/repo_deploy_workflow_2026.md`
+  - `sed -n '1,260p' docs/reportRef_micro_mirror.md`
+  - `sed -n '1,260p' docs/result_micro_mirror.md`
+  - `rg -n "hackathon|General Track|Hobby|\\$20|non-commercial|source of truth" README.md docs/repo_deploy_workflow_2026.md docs/reportRef_micro_mirror.md docs/result_micro_mirror.md`
+  - `git diff -- README.md docs/repo_deploy_workflow_2026.md docs/reportRef_micro_mirror.md docs/result_micro_mirror.md`
+  - 结果:
+    - 主仓库 README 已移除黑客松主叙事
+    - 主仓库文档已补足 Vercel 原理、免费边界与升级条件
+    - 两仓库已形成有意区分的 README 定位
+- actual_ccr_model_usage:
+  - 主侧实现与官方来源核对: `Codex / GPT-5`
+  - 次侧 challenge:
+    - `Gemini` via `agent_roundtrip.sh` 失败，原因：`HTTP 401 Invalid apiKey`
+  - fallback:
+    - 依据用户要求、本地仓库状态与官方 Vercel 文档收敛方案
+- next_tasks:
+  - 本地验证两边文档差异是否符合目标
+  - 提交并推送 `micro-mirror`
+  - 提交并推送 `micro-mirror-deploy`
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603150109_micro_mirror_repo_positioning_split.md`
+- covered_dialogue_ids:
+  - `dlg_202603150109_openai_micro_mirror_repo_positioning_split`
+  - `dlg_202603150115_gemini_micro_mirror_repo_positioning_challenge`
+
 ## 2026-03-15 00:46
 
 ### group_git_author_rewrite_to_uplinkira
