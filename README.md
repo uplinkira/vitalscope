@@ -25,6 +25,9 @@ python3 -m http.server 8000
 - `1+requirement.md` 中明确的最终提交入口：
   - `https://julieshi.notion.site/8b33110376804173b6ce1c95ee4a25c6`
 
+## 当前 GitHub 仓库
+- `https://github.com/uplinkira/micro-mirror.git`
+
 ## 建议你最后提交的内容
 - GitHub 仓库链接
 - 可访问的 demo 链接或本地演示说明

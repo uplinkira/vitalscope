@@ -55,3 +55,45 @@
 - added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141718_micro_mirror_mvp.md`
 - covered_dialogue_ids:
   - `dlg_202603141718_openai_micro_mirror_mvp`
+
+## 2026-03-14 17:25
+
+### group_repo_publish
+- dialogue_id: `dlg_202603141725_openai_micro_mirror_git_publish`
+- task_group: `group_repo_publish`
+- changed_paths:
+  - `.gitignore`
+  - `README.md`
+- decision:
+  - 在 `micro-mirror` 目录内初始化独立 Git 仓库
+  - 添加最小 `.gitignore`
+  - 直接推送到 `https://github.com/uplinkira/micro-mirror.git`
+- alternatives:
+  - 继续使用未初始化目录，手工打包上传
+  - 把项目塞回更大的仓库后再拆分
+- divergence:
+  - 采用独立仓库优先，而不是继续挂在旧目录上下文里
+- decision_rationale:
+  - 用户明确要求“快速上传到我们的 github”
+  - 独立仓库更适合直接提交 hackathon 成果链接
+- verification:
+  - `git init`
+  - `git add .`
+  - `git commit -m "first commit"`
+  - `git remote add origin https://github.com/uplinkira/micro-mirror.git`
+  - `git push -u origin main`
+  - `git remote -v`
+  - `git status --short`
+  - 结果:
+    - 推送成功：`main -> main`
+    - 远端已绑定 `origin`
+    - 工作区当前干净
+- actual_ccr_model_usage:
+  - 主侧实现与发布: `Codex / GPT-5`
+- next_tasks:
+  - 直接把 GitHub 仓库链接和 demo 说明提交到 `Submission link`
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141725_micro_mirror_git_publish.md`
+- covered_dialogue_ids:
+  - `dlg_202603141725_openai_micro_mirror_git_publish`

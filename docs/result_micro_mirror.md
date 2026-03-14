@@ -3,6 +3,9 @@
 ## 当前目录
 - `D+20260314+goat/micro-mirror/`
 
+## 当前仓库
+- `https://github.com/uplinkira/micro-mirror.git`
+
 ## 稳定命令
 - 运行本地静态站
   - `cd D+20260314+goat/micro-mirror && python3 -m http.server 8000`
