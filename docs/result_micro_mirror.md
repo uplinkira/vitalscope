@@ -33,12 +33,20 @@
 - 智能戒指预购
 - GOAT Testnet3 支付
 - AgentKit 覆盖面说明
+- AgentKit Workflow Studio：
+  - foundation 卡片
+  - 三条产品化工作流
+  - 对应 action 列表
+  - 本地 `agentkit/` 源码片段预览
 
 ## 可直接复制的材料
 - 项目一句话概括与 5 分钟演讲稿：
   - `docs/pitch_micro_mirror.md`
 - `VERCEL_TOKEN` 获取与部署手册：
   - `docs/vercel_token_guide.md`
+
+## AgentKit 资产刷新命令
+- `cd D+20260314+goat/micro-mirror && node scripts/generate-agentkit-demo-assets.mjs`
 
 ## Judge 快速口径
 - `x402`：

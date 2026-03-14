@@ -1,3 +1,64 @@
+## 2026-03-14 18:18
+
+### group_agentkit_demo_upgrade
+- dialogue_id: `dlg_202603141821_openai_micro_mirror_agentkit_demo_upgrade`
+- task_group: `group_agentkit_demo_upgrade`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/index.html`
+  - `D+20260314+goat/micro-mirror/generated/agentkit-demo.json`
+  - `D+20260314+goat/micro-mirror/scripts/generate-agentkit-demo-assets.mjs`
+  - `D+20260314+goat/micro-mirror/README.md`
+  - `D+20260314+goat/micro-mirror/docs/explain_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror/docs/result_micro_mirror.md`
+  - `ccrVscode/dialogue/dlg_202603141815_gemini_micro_mirror_agentkit_demo_challenge.md`
+  - `ccrVscode/dialogue/dlg_202603141818_openai_micro_mirror_agentkit_demo_challenge.md`
+  - `ccrVscode/dialogue/dlg_202603141821_openai_micro_mirror_agentkit_demo_upgrade.md`
+  - `ccrVscode/docs/target_optimization/conv_202603141821_micro_mirror_agentkit_demo_upgrade.md`
+- decision:
+  - 不再只展示 `AgentKit catalog` 摘要
+  - 直接补一个 `AgentKit Workflow Studio`
+  - 用本地 `agentkit/` 文件夹生成 workflow / foundation / source preview 资产
+- alternatives:
+  - 只继续堆 `catalog` 数字和 plugin 数量
+  - 只在讲稿里说用了 `x402` / `ERC-8004`，页面不新增可视化
+  - 直接上真实后端集成
+- divergence:
+  - 选择“源码可视化 + 工作流映射”的中间路线
+  - 既比纯讲稿更扎实，又比真接后端更快、更稳
+- decision_rationale:
+  - 用户要的是尽快让 demo 更明显地用上 `agentkit` 文件夹
+  - hackathon judge 更容易被“工作流 + action + 源码片段”说服
+  - 当前静态单页最适合做基于本地源码的增强，而不是临时再起服务端
+- verification:
+  - `node scripts/generate-agentkit-demo-assets.mjs`
+  - `awk '/<script type=\"module\">/{flag=1;next}/<\\/script>/{flag=0}flag' index.html > /tmp/micro_mirror_check_stage2.mjs && node --check /tmp/micro_mirror_check_stage2.mjs`
+  - `python3 -m http.server 8022`
+  - `curl -I http://127.0.0.1:8022/`
+  - `curl -I http://127.0.0.1:8022/generated/agentkit-demo.json`
+  - `curl -s http://127.0.0.1:8022/generated/agentkit-demo.json | sed -n '1,40p'`
+  - 结果:
+    - `agentkit-demo.json` 成功生成
+    - 页面脚本语法检查通过
+    - `/` 返回 `HTTP/1.0 200 OK`
+    - `/generated/agentkit-demo.json` 返回 `HTTP/1.0 200 OK`
+- actual_ccr_model_usage:
+  - 主侧实现与验证: `Codex / GPT-5`
+  - 次侧 challenge 尝试:
+    - `Gemini` via `agent_roundtrip.sh` 失败，原因：`SSL: CERTIFICATE_VERIFY_FAILED`
+    - `OpenAI` via `agent_roundtrip.sh` 失败，原因：`SSL: CERTIFICATE_VERIFY_FAILED`
+  - fallback:
+    - 依据本地 `agentkit` 源码和现有 demo 结构自主收敛方案
+- next_tasks:
+  - 如需继续冲刺，可把 `workflow` 面板再压成“上台模式”默认展开
+  - 如需更进一步，可接真实 `x402 merchant gateway`
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141821_micro_mirror_agentkit_demo_upgrade.md`
+- covered_dialogue_ids:
+  - `dlg_202603141815_gemini_micro_mirror_agentkit_demo_challenge`
+  - `dlg_202603141818_openai_micro_mirror_agentkit_demo_challenge`
+  - `dlg_202603141821_openai_micro_mirror_agentkit_demo_upgrade`
+
 ## 2026-03-14 18:08
 
 ### group_note_agentkit_module_principles

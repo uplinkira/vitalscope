@@ -664,6 +664,155 @@
     color: var(--muted);
   }
 
+  .foundation-grid,
+  .workflow-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .foundation-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .foundation-card,
+  .workflow-card,
+  .workflow-panel,
+  .workflow-column,
+  .action-item {
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.66);
+  }
+
+  .foundation-card,
+  .workflow-card,
+  .workflow-column {
+    padding: 14px;
+  }
+
+  .foundation-card strong,
+  .workflow-card strong,
+  .action-item strong {
+    display: block;
+    font-size: 14px;
+  }
+
+  .foundation-card p,
+  .foundation-card small,
+  .workflow-card p,
+  .workflow-card small {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .workflow-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .workflow-card {
+    cursor: pointer;
+  }
+
+  .workflow-card.active {
+    border-color: rgba(72, 106, 87, 0.3);
+    background: rgba(110, 155, 120, 0.1);
+  }
+
+  .workflow-badge-row,
+  .workflow-split,
+  .action-meta,
+  .source-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .workflow-split {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 12px;
+  }
+
+  .workflow-panel {
+    padding: 12px;
+  }
+
+  .workflow-column {
+    display: grid;
+    gap: 12px;
+  }
+
+  .workflow-copy p,
+  .workflow-copy li,
+  .workflow-column li {
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  .workflow-copy ul,
+  .action-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  .workflow-copy ul {
+    margin-top: 10px;
+  }
+
+  .action-item {
+    padding: 12px;
+  }
+
+  .action-meta {
+    margin-top: 8px;
+    align-items: center;
+  }
+
+  .tag,
+  .risk-pill,
+  .source-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 249, 241, 0.82);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+  }
+
+  .risk-pill.read { color: var(--sky); }
+  .risk-pill.low { color: var(--sage); }
+  .risk-pill.medium { color: var(--amber); }
+  .risk-pill.high { color: var(--rose); }
+  .risk-pill.unknown { color: var(--muted); }
+
+  .source-tab {
+    cursor: pointer;
+    font-size: 10px;
+  }
+
+  .source-tab.active {
+    border-color: rgba(72, 106, 87, 0.3);
+    background: rgba(110, 155, 120, 0.1);
+    color: var(--ink);
+  }
+
+  .file-line {
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--muted);
+    word-break: break-word;
+  }
+
   .order-list {
     display: grid;
     gap: 10px;
@@ -745,7 +894,8 @@
     .hero,
     .workspace,
     .camera-shell,
-    .order-grid {
+    .order-grid,
+    .workflow-split {
       grid-template-columns: 1fr;
     }
   }
@@ -759,7 +909,9 @@
     .summary-grid,
     .dual-report,
     .wallet-strip,
-    .mini-grid {
+    .mini-grid,
+    .foundation-grid,
+    .workflow-grid {
       grid-template-columns: 1fr;
     }
 
@@ -1050,6 +1202,17 @@
         </div>
         <div class="mini-grid" id="catalog-summary"></div>
         <div class="infra-grid" id="catalog-plugins" style="margin-top:12px"></div>
+
+        <div class="section-head" style="margin-top:18px">
+          <div>
+            <h3 style="font-size:16px">AgentKit Workflow Studio</h3>
+            <p>这块直接读取由本地 `agentkit/` 目录生成的工作流、基础模块和源码片段，让 judge 能看见我们怎么把组件落到产品闭环里。</p>
+          </div>
+          <div class="badge mono" id="workflow-status">workflow loading</div>
+        </div>
+        <div class="foundation-grid" id="foundation-grid"></div>
+        <div class="workflow-grid" id="workflow-grid" style="margin-top:12px"></div>
+        <div class="workflow-panel" id="workflow-panel" style="margin-top:12px"></div>
       </article>
     </div>
   </section>
@@ -1125,7 +1288,10 @@
     orders: loadStorage(ORDERS_KEY, () => []),
     wallet: { account: null, chainId: null },
     catalog: null,
+    agentkitDemo: null,
     selectedPlanId: "ring",
+    selectedWorkflowId: "ring-checkout",
+    selectedSourceIndex: 0,
     currentOrder: null,
   };
 
@@ -1883,15 +2049,37 @@
     `).join("");
   }
 
-  async function loadCatalog() {
-    try {
-      const response = await fetch("./generated/agentkit-catalog.json");
-      state.catalog = await response.json();
+  async function loadAgentkitAssets() {
+    const [catalogResult, demoResult] = await Promise.allSettled([
+      fetch("./generated/agentkit-catalog.json").then((response) => {
+        if (!response.ok) throw new Error(`catalog ${response.status}`);
+        return response.json();
+      }),
+      fetch("./generated/agentkit-demo.json").then((response) => {
+        if (!response.ok) throw new Error(`demo ${response.status}`);
+        return response.json();
+      }),
+    ]);
+
+    if (catalogResult.status === "fulfilled") {
+      state.catalog = catalogResult.value;
       $("catalog-status").textContent = "catalog ready";
       renderCatalog();
-    } catch (error) {
+    } else {
       $("catalog-status").textContent = "catalog missing";
-      $("catalog-summary").innerHTML = `<div class="helper">无法读取 AgentKit catalog：${escapeHtml(error.message)}</div>`;
+      $("catalog-summary").innerHTML = `<div class="helper">无法读取 AgentKit catalog：${escapeHtml(catalogResult.reason?.message || "unknown error")}</div>`;
+      $("catalog-plugins").innerHTML = "";
+    }
+
+    if (demoResult.status === "fulfilled") {
+      state.agentkitDemo = demoResult.value;
+      $("workflow-status").textContent = "workflow ready";
+      renderAgentkitStudio();
+    } else {
+      $("workflow-status").textContent = "workflow missing";
+      $("foundation-grid").innerHTML = `<div class="helper">无法读取 AgentKit workflow demo：${escapeHtml(demoResult.reason?.message || "unknown error")}</div>`;
+      $("workflow-grid").innerHTML = "";
+      $("workflow-panel").innerHTML = "";
     }
   }
 
@@ -1923,6 +2111,100 @@
     $("catalog-plugins").innerHTML = pluginCards;
   }
 
+  function getSelectedWorkflow() {
+    const workflows = state.agentkitDemo?.workflows || [];
+    if (!workflows.length) return null;
+    return workflows.find((workflow) => workflow.id === state.selectedWorkflowId) || workflows[0];
+  }
+
+  function renderAgentkitStudio() {
+    if (!state.agentkitDemo?.workflows?.length) return;
+
+    $("foundation-grid").innerHTML = (state.agentkitDemo.foundations || []).map((foundation) => `
+      <article class="foundation-card">
+        <strong>${escapeHtml(foundation.label)}</strong>
+        <p>${escapeHtml(foundation.description)}</p>
+        <small>${escapeHtml(foundation.file)}</small>
+      </article>
+    `).join("");
+
+    const workflows = state.agentkitDemo.workflows;
+    const selectedWorkflow = getSelectedWorkflow();
+    if (!selectedWorkflow) return;
+
+    state.selectedSourceIndex = clamp(state.selectedSourceIndex, 0, Math.max(selectedWorkflow.sourceFiles.length - 1, 0));
+    const selectedSource = selectedWorkflow.sourceFiles[state.selectedSourceIndex] || selectedWorkflow.sourceFiles[0];
+
+    $("workflow-grid").innerHTML = workflows.map((workflow) => `
+      <article class="workflow-card ${workflow.id === selectedWorkflow.id ? "active" : ""}" data-workflow-id="${workflow.id}">
+        <div class="workflow-badge-row">
+          <span class="tag">${escapeHtml(workflow.badge)}</span>
+          <span class="tag">${escapeHtml(`${workflow.actions.length} actions`)}</span>
+        </div>
+        <strong style="margin-top:10px">${escapeHtml(workflow.title)}</strong>
+        <p>${escapeHtml(workflow.judgePitch)}</p>
+        <small>${escapeHtml(workflow.businessUse)}</small>
+      </article>
+    `).join("");
+
+    $("workflow-panel").innerHTML = `
+      <div class="workflow-split">
+        <div class="workflow-column workflow-copy">
+          <div>
+            <div class="workflow-badge-row">
+              <span class="tag">${escapeHtml(selectedWorkflow.badge)}</span>
+              <span class="tag">${escapeHtml("judge-ready")}</span>
+            </div>
+            <h3 style="margin-top:10px">${escapeHtml(selectedWorkflow.title)}</h3>
+            <p>${escapeHtml(selectedWorkflow.judgePitch)}</p>
+            <p><strong>Current MVP:</strong> ${escapeHtml(selectedWorkflow.currentMvp)}</p>
+            <p><strong>Next integration:</strong> ${escapeHtml(selectedWorkflow.nextStep)}</p>
+          </div>
+
+          <div>
+            <div class="helper">Judge 会看到</div>
+            <ul>
+              ${selectedWorkflow.userSees.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+            </ul>
+          </div>
+
+          <div>
+            <div class="helper">Mapped actions</div>
+            <div class="action-list">
+              ${selectedWorkflow.actions.map((action) => `
+                <article class="action-item">
+                  <strong>${escapeHtml(action.name)}</strong>
+                  <div class="file-line">${escapeHtml(action.description || "No description")}</div>
+                  <div class="action-meta">
+                    <span class="risk-pill ${escapeHtml((action.riskLevel || "unknown").toLowerCase())}">${escapeHtml(action.riskLevel || "unknown")}</span>
+                    <span class="tag">${escapeHtml(action.plugin || "plugin")}</span>
+                    <span class="tag">${escapeHtml((action.networks || []).join(" / ") || "local")}</span>
+                  </div>
+                  <div class="file-line">${escapeHtml(action.file || "file not captured")}</div>
+                </article>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+
+        <div class="workflow-column">
+          <div>
+            <div class="helper">Source snapshots from local agentkit folder</div>
+            <div class="source-tabs" style="margin-top:10px">
+              ${selectedWorkflow.sourceFiles.map((source, index) => `
+                <button class="source-tab ${index === state.selectedSourceIndex ? "active" : ""}" data-source-index="${index}">
+                  ${escapeHtml(source.path.split("/").slice(-2).join("/"))}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+          <div class="file-line">${escapeHtml(selectedSource.path)}</div>
+          <pre class="code mono">${escapeHtml(selectedSource.preview)}</pre>
+        </div>
+      </div>
+    `;
+  }
+
   function bindTimelineClicks() {
     $("timeline-list").addEventListener("click", (event) => {
       const target = event.target.closest("[data-record-id]");
@@ -1941,6 +2223,23 @@
       state.selectedPlanId = target.getAttribute("data-plan-id");
       renderPlans();
       renderAssetOptions();
+    });
+  }
+
+  function bindAgentkitStudio() {
+    $("workflow-grid").addEventListener("click", (event) => {
+      const target = event.target.closest("[data-workflow-id]");
+      if (!target) return;
+      state.selectedWorkflowId = target.getAttribute("data-workflow-id");
+      state.selectedSourceIndex = 0;
+      renderAgentkitStudio();
+    });
+
+    $("workflow-panel").addEventListener("click", (event) => {
+      const target = event.target.closest("[data-source-index]");
+      if (!target) return;
+      state.selectedSourceIndex = Number(target.getAttribute("data-source-index"));
+      renderAgentkitStudio();
     });
   }
 
@@ -1981,6 +2280,7 @@
 
     bindTimelineClicks();
     bindPlanClicks();
+    bindAgentkitStudio();
     bindRanges();
   }
 
@@ -2008,7 +2308,7 @@
 
   bindEvents();
   initialRender();
-  loadCatalog();
+  loadAgentkitAssets();
 </script>
 </body>
 </html>

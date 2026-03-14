@@ -1,0 +1,341 @@
+{
+  "generatedAt": "2026-03-14T10:14:48.038Z",
+  "sourceRoot": "../../../agentkit",
+  "foundations": [
+    {
+      "id": "runtime",
+      "label": "Execution Runtime",
+      "description": "Policy, validation, retry, timeout, hooks, metrics.",
+      "file": "core/runtime/execution-runtime.ts"
+    },
+    {
+      "id": "policy",
+      "label": "Policy Engine",
+      "description": "Risk gating and confirmation control.",
+      "file": "core/policy/policy-engine.ts"
+    },
+    {
+      "id": "provider",
+      "label": "Action Provider",
+      "description": "Action registry plus tool manifest export.",
+      "file": "providers/action-provider.ts"
+    },
+    {
+      "id": "tokens",
+      "label": "GOAT Token Registry",
+      "description": "Symbol-to-address resolution for GOAT chain assets.",
+      "file": "networks/goat/tokens.ts"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "ring-checkout",
+      "title": "Smart Ring Checkout",
+      "badge": "x402 live path",
+      "judgePitch": "把智能戒指预购从页面按钮升级成 AgentKit 可编排的支付状态机。",
+      "businessUse": "适合预购、健康订阅月费、升级报告解锁。",
+      "currentMvp": "页面已具备 GOAT Testnet3 钱包连接、订单生成、签名授权和支付入口。",
+      "nextStep": "把真实 merchant gateway 接入 `goat.x402.payment.create`、`submitSignature`、`status`。",
+      "actionNames": [
+        "wallet.resolve_token",
+        "wallet.balance",
+        "goat.x402.payment.create",
+        "goat.x402.payment.submitSignature",
+        "goat.x402.payment.transfer",
+        "goat.x402.payment.status"
+      ],
+      "sourceFiles": [
+        {
+          "path": "examples/x402-payment-flow/eip712-full-flow.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/examples/x402-payment-flow/eip712-full-flow.ts",
+          "preview": "import { Wallet } from 'ethers';\nimport { EvmPayerWalletAdapter } from '../../plugins/x402/adapters/evm-payer-wallet';\nimport type { MerchantGatewayAdapter } from '../../plugins/x402/adapters/types';\n\nclass MockMerchantGateway implements MerchantGatewayAdapter {\n  async createPaymentIntent() {\n    return {\n      paymentId: `order_${Date.now()}`,\n      status: 'created' as const,\n      calldataSignRequest: {\n        domain: {\n          name: 'GoatX402',\n          version: '1',\n          chainId: 2345,\n          verifyingContract: '0x0000000000000000000000000000000000000001',\n        },\n        types: {\n          Eip3009CallbackData: [\n            { name: 'payer', type: 'address' },\n            { name: 'amount', type: 'uint256' },\n            { name: 'orderId', type: 'string' },\n          ],\n        },\n        primaryType: 'Eip3009CallbackData',\n        message: {\n          payer: '0x000000000000000000000000000000000000dEaD',\n          amount: '1000000',\n          orderId: 'demo-order',"
+        },
+        {
+          "path": "plugins/x402/actions/payment.create.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/x402/actions/payment.create.ts",
+          "preview": "import { z } from 'zod';\nimport type { ActionDefinition } from '../../../core/schema/action';\nimport type { CalldataSignRequest, MerchantGatewayAdapter } from '../adapters/types';\nimport { evmAddress } from '../../../core/schema/validators';\n\nexport interface CreatePaymentInput {\n  to: string;\n  asset: string;\n  amount: string;\n  fromAddress?: string;\n  expiresAt?: number;\n  idempotencyKey?: string;\n  callbackCalldata?: string;\n}\n\nexport interface CreatePaymentOutput {\n  paymentId: string;\n  status: 'created';\n  calldataSignRequest?: CalldataSignRequest;\n}\n\nconst inputSchema = z.object({\n  to: evmAddress,\n  asset: z.string().min(2),\n  amount: z.string().min(1),\n  fromAddress: evmAddress.optional(),\n  expiresAt: z.number().optional(),\n  idempotencyKey: z.string().optional(),\n  callbackCalldata: z.string().optional(),\n});"
+        },
+        {
+          "path": "plugins/x402/actions/payment.submit-signature.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/x402/actions/payment.submit-signature.ts",
+          "preview": "import { z } from 'zod';\nimport type { ActionDefinition } from '../../../core/schema/action';\nimport type { CalldataSignRequest, MerchantGatewayAdapter, PayerWalletAdapter } from '../adapters/types';\n\nexport interface SubmitSignatureInput {\n  paymentId: string;\n  signature?: string;\n  calldataSignRequest?: CalldataSignRequest;\n}\n\nexport interface SubmitSignatureOutput {\n  paymentId: string;\n  status: 'authorized' | 'failed';\n}\n\nconst signReqSchema = z.object({\n  domain: z.record(z.any()),\n  types: z.record(z.array(z.object({ name: z.string(), type: z.string() }))),\n  primaryType: z.string().min(1),\n  message: z.record(z.any()),\n});\n\nconst inputSchema = z\n  .object({\n    paymentId: z.string().min(3),\n    signature: z.string().min(3).optional(),\n    calldataSignRequest: signReqSchema.optional(),\n  })\n  .refine((v) => Boolean(v.signature || v.calldataSignRequest), {\n    message: 'signature or calldataSignRequest is required',\n    path: ['signature'],\n  });\n\nexport function submitSignatureAction(\n  merchant: MerchantGatewayAdapter,\n  payer: PayerWalletAdapter"
+        },
+        {
+          "path": "plugins/x402/adapters/http-merchant-gateway.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/x402/adapters/http-merchant-gateway.ts",
+          "preview": "import { ErrorCodes } from '../../../core/errors/error-codes';\nimport { AgentkitRuntimeError } from '../../../core/errors/error';\nimport type { CreatePaymentIntentInput, CreatePaymentIntentResult, MerchantGatewayAdapter, PaymentStatus } from './types';\n\nconst ORDER_STATUS_MAP: Record<string, PaymentStatus> = {\n  CHECKOUT_VERIFIED: 'created',\n  PAYMENT_CONFIRMED: 'authorized',\n  INVOICED: 'settled',\n  FAILED: 'failed',\n  EXPIRED: 'expired',\n  CANCELLED: 'failed',\n};\n\nexport interface MerchantGatewayRoutes {\n  createOrderPath: string;\n  orderStatusPath: string; // use :paymentId placeholder\n  submitSignaturePath: string;\n  cancelOrderPath: string;\n}\n\nexport interface HttpMerchantGatewayAdapterOptions {\n  headers?: Record<string, string>;\n  routes?: Partial<MerchantGatewayRoutes>;\n  /** HTTP request timeout in milliseconds. Default: 30000 (30s). */\n  timeoutMs?: number;\n}\n\nconst DEFAULT_ROUTES: MerchantGatewayRoutes = {\n  createOrderPath: '/x402/create-order',\n  orderStatusPath: '/x402/order-status/:paymentId',\n  submitSignaturePath: '/x402/submit-signature',\n  cancelOrderPath: '/x402/cancel-order',\n};\n\nfunction joinUrl(baseUrl: string, path: string): string {\n  return `${baseUrl.replace(/\\/$/, '')}/${path.replace(/^\\//, '')}`;\n}\n\nasync function parseBodySafe(resp: Response): Promise<any> {\n  const text = await resp.text();\n  try {\n    return text ? JSON.parse(text) : {};"
+        }
+      ],
+      "userSees": [
+        "用户看到智能戒指预购单、签名授权和支付状态更新的完整路径。",
+        "评委看到的不只是支付按钮，而是可追踪的 x402 intent -> sign -> settle 流程。"
+      ],
+      "actions": [
+        {
+          "name": "wallet.resolve_token",
+          "description": "Resolve a token symbol to its on-chain contract address",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/resolve-token.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.balance",
+          "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/balance.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "goat.x402.payment.create",
+          "description": "Create x402 payment intent via merchant gateway API",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.create.ts",
+          "plugin": "x402"
+        },
+        {
+          "name": "goat.x402.payment.submitSignature",
+          "description": "Submit payer signature to merchant gateway (supports EIP-712 signing)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.submit-signature.ts",
+          "plugin": "x402"
+        },
+        {
+          "name": "goat.x402.payment.transfer",
+          "description": "Execute payer wallet token transfer to merchant payToAddress",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.transfer.ts",
+          "plugin": "x402"
+        },
+        {
+          "name": "goat.x402.payment.status",
+          "description": "Get x402 payment status via merchant gateway API",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.status.ts",
+          "plugin": "x402"
+        }
+      ]
+    },
+    {
+      "id": "merchant-ops",
+      "title": "Merchant Ops Loop",
+      "badge": "x402-merchant growth",
+      "judgePitch": "把 demo 从一次性付款页扩展成可运营的订阅业务后台能力。",
+      "businessUse": "适合订单追踪、营收看板、webhook 开通和收款地址管理。",
+      "currentMvp": "页面已展示订单列表，本地可保存演示订单。",
+      "nextStep": "把订单状态、dashboard 和 webhook 能力接入真实 merchant portal API。",
+      "actionNames": [
+        "goat.x402.merchant.dashboard.stats",
+        "goat.x402.merchant.orders.list",
+        "goat.x402.merchant.balance.get",
+        "goat.x402.merchant.webhooks.create",
+        "goat.x402.merchant.addresses.list"
+      ],
+      "sourceFiles": [
+        {
+          "path": "plugins/x402-merchant/index.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/x402-merchant/index.ts",
+          "preview": "// Adapter\nexport type { MerchantPortalClient } from './adapters/types';\nexport { HttpMerchantPortalClient } from './adapters/http-client';\nexport type { HttpMerchantPortalClientOptions } from './adapters/http-client';\n\n// Auth\nexport { merchantAuthRegisterAction } from './actions/auth.register';\nexport { merchantAuthRegisterInviteAction } from './actions/auth.register-invite';\nexport { merchantAuthLoginAction } from './actions/auth.login';\nexport { merchantAuthRefreshAction } from './actions/auth.refresh';\n\n// Dashboard\nexport { merchantDashboardStatsAction } from './actions/dashboard.stats';\n\n// Profile\nexport { merchantProfileGetAction } from './actions/profile.get';\nexport { merchantProfileUpdateAction } from './actions/profile.update';\n\n// Orders\nexport { merchantOrdersListAction } from './actions/orders.list';\nexport { merchantOrdersGetAction } from './actions/orders.get';\n\n// Balance & Fees\nexport { merchantBalanceGetAction } from './actions/balance.get';\nexport { merchantBalanceTransactionsAction } from './actions/balance.transactions';\nexport { merchantBalanceFeesConfigAction } from './actions/balance.fees-config';\n\n// Supported Tokens\nexport { merchantSupportedTokensListAction } from './actions/supported-tokens.list';\n\n// Receiving Addresses\nexport { merchantAddressesListAction } from './actions/addresses.list';\nexport { merchantAddressesAddAction } from './actions/addresses.add';\nexport { merchantAddressesRemoveAction } from './actions/addresses.remove';\n\n// Callback Contracts (DELEGATE mode)\nexport { merchantCallbackContractsListAction } from './actions/callback-contracts.list';\nexport { merchantCallbackContractsSubmitAction } from './actions/callback-contracts.submit';\nexport { merchantCallbackContractsRemoveAction } from './actions/callback-contracts.remove';\nexport { merchantCallbackContractsCancelSubmissionAction } from './actions/callback-contracts.cancel-submission';"
+        },
+        {
+          "path": "plugins/x402-merchant/actions/dashboard.stats.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/x402-merchant/actions/dashboard.stats.ts",
+          "preview": "import { z } from 'zod';\nimport type { ActionDefinition } from '../../../core/schema/action';\nimport type { MerchantPortalClient } from '../adapters/types';\n\nconst inputSchema = z.object({});\n\nexport function merchantDashboardStatsAction(\n  client: MerchantPortalClient,\n): ActionDefinition {\n  return {\n    name: 'goat.x402.merchant.dashboard.stats',\n    description: 'Get merchant dashboard statistics (revenue, order counts, recent orders)',\n    riskLevel: 'read',\n    requiresConfirmation: false,\n    networks: ['goat-mainnet', 'goat-testnet'],\n    zodInputSchema: inputSchema,\n    async execute(ctx) {\n      return client.get('/merchant/v1/dashboard/stats', { signal: ctx.signal, accessToken: ctx.accessToken });\n    },\n  };\n}"
+        },
+        {
+          "path": "plugins/x402-merchant/actions/orders.list.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/x402-merchant/actions/orders.list.ts",
+          "preview": "import { z } from 'zod';\nimport type { ActionDefinition } from '../../../core/schema/action';\nimport type { MerchantPortalClient } from '../adapters/types';\n\nconst inputSchema = z.object({\n  limit: z.number().int().positive().optional().describe('Page size (default server-defined)'),\n  offset: z.number().int().min(0).optional().describe('Pagination offset'),\n  status: z.string().optional().describe('Filter by order status (e.g. PAYMENT_CONFIRMED)'),\n  flow: z.string().optional().describe('Filter by payment flow (e.g. ERC20_DIRECT)'),\n  chain_id: z.number().int().optional().describe('Filter by chain ID'),\n  from: z.string().optional().describe('Start date filter (ISO 8601)'),\n  to: z.string().optional().describe('End date filter (ISO 8601)'),\n});\n\nexport function merchantOrdersListAction(\n  client: MerchantPortalClient,\n): ActionDefinition {\n  return {\n    name: 'goat.x402.merchant.orders.list',\n    description: 'List x402 merchant orders with optional filters (status, flow, chain, date range)',\n    riskLevel: 'read',\n    requiresConfirmation: false,\n    networks: ['goat-mainnet', 'goat-testnet'],\n    zodInputSchema: inputSchema,\n    async execute(ctx, input: any) {\n      const params = new URLSearchParams();\n      for (const [k, v] of Object.entries(input)) {\n        if (v != null) params.set(k, String(v));\n      }\n      const qs = params.toString();"
+        },
+        {
+          "path": "plugins/x402-merchant/adapters/types.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/x402-merchant/adapters/types.ts",
+          "preview": "/** Per-request options for merchant portal HTTP methods. */\nexport interface RequestOptions {\n  signal?: AbortSignal;\n  /** Per-request bearer token; takes precedence over the client's stored token. */\n  accessToken?: string;\n}\n\n/**\n * Generic HTTP client interface for the x402 Merchant Portal API.\n * All merchant portal actions use this client to make authenticated requests.\n */\nexport interface MerchantPortalClient {\n  /** Set the default bearer access token for authenticated requests. */\n  setAccessToken(token: string): void;\n\n  /** Get the current default access token (if any). */\n  getAccessToken(): string | undefined;\n\n  /** Make a GET request. */\n  get<T = any>(path: string, options?: RequestOptions): Promise<T>;\n\n  /** Make a POST request with optional JSON body. */\n  post<T = any>(path: string, body?: unknown, options?: RequestOptions): Promise<T>;\n\n  /** Make a PUT request with optional JSON body. */\n  put<T = any>(path: string, body?: unknown, options?: RequestOptions): Promise<T>;\n\n  /** Make a DELETE request. */\n  delete<T = any>(path: string, options?: RequestOptions): Promise<T>;\n}"
+        }
+      ],
+      "userSees": [
+        "团队可以解释订单怎么从支付成功流向订阅开通和发货。",
+        "评委能快速理解我们已经考虑了 merchant 运营，不是只有交易瞬间。"
+      ],
+      "actions": [
+        {
+          "name": "goat.x402.merchant.dashboard.stats",
+          "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/dashboard.stats.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.orders.list",
+          "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/orders.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.balance.get",
+          "description": "Get x402 merchant fee balance",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/balance.get.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.webhooks.create",
+          "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/webhooks.create.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.addresses.list",
+          "description": "List x402 merchant receiving addresses",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/addresses.list.ts",
+          "plugin": "x402-merchant"
+        }
+      ]
+    },
+    {
+      "id": "agent-trust",
+      "title": "Health Agent Trust Layer",
+      "badge": "ERC-8004 moat",
+      "judgePitch": "把健康建议服务注册成可追踪、可积累信誉的链上 agent。",
+      "businessUse": "适合把分析 agent 版本、方法论和服务信誉沉淀为长期资产。",
+      "currentMvp": "页面已讲清 agent 身份层的产品方向，但还没有真实上链注册。",
+      "nextStep": "把 `Micro Mirror Recovery Agent` 注册到测试网，并用标签化反馈积累信誉。",
+      "actionNames": [
+        "erc8004.register_agent",
+        "erc8004.set_agent_uri",
+        "erc8004.set_metadata",
+        "erc8004.give_feedback",
+        "erc8004.get_reputation"
+      ],
+      "sourceFiles": [
+        {
+          "path": "plugins/erc8004/actions/register-agent.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/erc8004/actions/register-agent.ts",
+          "preview": "import { z } from 'zod';\nimport type { ActionDefinition } from '../../../core/schema/action';\nimport type { WalletProvider } from '../../../core/wallet/wallet-provider';\nimport { getIdentityRegistryAddress } from '../addresses';\n\nexport interface RegisterAgentInput {\n  agentURI: string;\n}\n\nexport interface RegisterAgentOutput {\n  txHash: string;\n}\n\nconst inputSchema = z.object({\n  agentURI: z.string().min(1, 'agentURI must not be empty'),\n});\n\nconst REGISTER_ABI = ['function register(string agentURI) returns (uint256 agentId)'];\n\nexport function erc8004RegisterAgentAction(\n  wallet: WalletProvider,\n): ActionDefinition<RegisterAgentInput, RegisterAgentOutput> {\n  return {\n    name: 'erc8004.register_agent',\n    description: 'Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent.',\n    riskLevel: 'high',\n    requiresConfirmation: true,\n    networks: ['goat-mainnet', 'goat-testnet'],\n    zodInputSchema: inputSchema,\n    async execute(ctx, input) {"
+        },
+        {
+          "path": "plugins/erc8004/actions/give-feedback.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/erc8004/actions/give-feedback.ts",
+          "preview": "import { z } from 'zod';\nimport type { ActionDefinition } from '../../../core/schema/action';\nimport type { WalletProvider } from '../../../core/wallet/wallet-provider';\nimport { getReputationRegistryAddress } from '../addresses';\n\nexport interface GiveFeedbackInput {\n  agentId: string;\n  value: number;\n  valueDecimals: number;\n  tag1: string;\n  tag2: string;\n  endpoint: string;\n  feedbackURI: string;\n  feedbackHash: string;\n}\n\nexport interface GiveFeedbackOutput {\n  txHash: string;\n}\n\nconst inputSchema = z.object({\n  agentId: z.string().regex(/^\\d+$/, 'agentId must be a numeric string'),\n  value: z.number().int(),\n  valueDecimals: z.number().int().min(0).max(18),\n  tag1: z.string(),\n  tag2: z.string(),\n  endpoint: z.string(),\n  feedbackURI: z.string(),\n  feedbackHash: z.string().regex(/^0x[0-9a-fA-F]{64}$/, 'feedbackHash must be a bytes32 hex string'),\n});\n\nconst GIVE_FEEDBACK_ABI = [\n  'function giveFeedback(uint256 agentId, int128 value, uint8 valueDecimals, string tag1, string tag2, string endpoint, string feedbackURI, bytes32 feedbackHash)',\n];\n\nexport function erc8004GiveFeedbackAction(\n  wallet: WalletProvider,\n): ActionDefinition<GiveFeedbackInput, GiveFeedbackOutput> {\n  return {\n    name: 'erc8004.give_feedback',\n    description: 'Submit feedback for an agent in the ERC-8004 Reputation Registry. Value is a signed integer with decimals (e.g. value=87, decimals=0 for a score of 87; value=9977, decimals=2 for 99.77%).',\n    riskLevel: 'medium',"
+        },
+        {
+          "path": "plugins/erc8004/actions/get-reputation.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/erc8004/actions/get-reputation.ts",
+          "preview": "import { z } from 'zod';\nimport type { ActionDefinition } from '../../../core/schema/action';\nimport type { WalletProvider } from '../../../core/wallet/wallet-provider';\nimport { getReputationRegistryAddress } from '../addresses';\nimport { evmAddress } from '../../../core/schema/validators';\n\nexport interface GetReputationInput {\n  agentId: string;\n  clientAddresses: string[];\n  tag1: string;\n  tag2: string;\n}\n\nexport interface GetReputationOutput {\n  agentId: string;\n  count: string;\n  summaryValue: string;\n  summaryValueDecimals: number;\n}\n\nconst inputSchema = z.object({\n  agentId: z.string().regex(/^\\d+$/, 'agentId must be a numeric string'),\n  clientAddresses: z.array(evmAddress),\n  tag1: z.string(),\n  tag2: z.string(),\n});\n\nconst GET_SUMMARY_ABI = [\n  'function getSummary(uint256 agentId, address[] clientAddresses, string tag1, string tag2) view returns (uint64 count, int128 summaryValue, uint8 summaryValueDecimals)',\n];\n\nexport function erc8004GetReputationAction(\n  wallet: WalletProvider,\n): ActionDefinition<GetReputationInput, GetReputationOutput> {\n  return {\n    name: 'erc8004.get_reputation',"
+        },
+        {
+          "path": "plugins/erc8004/addresses.ts",
+          "absolutePath": "/Users/orangesnail/Desktop/agent_yaqi/agentkit/plugins/erc8004/addresses.ts",
+          "preview": "/**\n * ERC-8004 contract addresses per network.\n *\n * Mainnet contracts are CREATE2-deployed at deterministic 0x8004… addresses.\n * Testnet3 contracts are deployed at different addresses and may not all be available yet.\n */\n\nexport interface Erc8004Addresses {\n  identityRegistry: string;\n  reputationRegistry: string | null; // null = not deployed on this network\n}\n\nconst addresses: Record<string, Erc8004Addresses> = {\n  'goat-mainnet': {\n    identityRegistry: '0x8004A169FB4a3325136EB29fA0ceB6D2e539a432',\n    reputationRegistry: '0x8004BAa17C55a88189AE136b182e5fdA19dE9b63',\n  },\n  'goat-testnet': {\n    identityRegistry: '0x556089008Fc0a60cD09390Eca93477ca254A5522',\n    reputationRegistry: '0xd9140951d8aE6E5F625a02F5908535e16e3af964',\n  },\n};\n\nexport function getIdentityRegistryAddress(network: string): string {\n  const entry = addresses[network];\n  if (!entry) {\n    throw new Error(`ERC-8004 Identity Registry is not available on network \"${network}\"`);\n  }"
+        }
+      ],
+      "userSees": [
+        "用户未来可以看到分析 agent 的版本说明、适用范围和信誉标签。",
+        "评委会看到我们把健康建议解释成 agent service，而不是普通内容页。"
+      ],
+      "actions": [
+        {
+          "name": "erc8004.register_agent",
+          "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/register-agent.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.set_agent_uri",
+          "description": "Update the registration URI for an agent in the ERC-8004 Identity Registry. Only the agent owner can call this.",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/set-agent-uri.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.set_metadata",
+          "description": "Set a metadata entry for an agent in the ERC-8004 Identity Registry. Only the agent owner can call this.",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/set-metadata.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.give_feedback",
+          "description": "Submit feedback for an agent in the ERC-8004 Reputation Registry. Value is a signed integer with decimals (e.g. value=87, decimals=0 for a score of 87; value=9977, decimals=2 for 99.77%).",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/give-feedback.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.get_reputation",
+          "description": "Get the reputation summary for an agent from the ERC-8004 Reputation Registry. Filter by client addresses and tags. Pass empty arrays/strings for no filter.",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/get-reputation.ts",
+          "plugin": "erc8004"
+        }
+      ]
+    }
+  ]
+}
