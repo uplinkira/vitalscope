@@ -66,6 +66,8 @@
   - `docs/pitch_micro_mirror.md`
 - `VERCEL_TOKEN` 获取与部署手册：
   - `docs/vercel_token_guide.md`
+- 仓库与部署工作流指南：
+  - `docs/repo_deploy_workflow_2026.md`
 
 ## AgentKit 资产刷新命令
 - `cd D+20260314+goat/micro-mirror && node scripts/generate-agentkit-demo-assets.mjs`

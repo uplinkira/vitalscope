@@ -1,3 +1,44 @@
+## 2026-03-14 19:35
+
+### group_repo_deploy_workflow_guide
+- dialogue_id: `dlg_202603141935_openai_micro_mirror_repo_deploy_guide`
+- task_group: `group_repo_deploy_workflow_guide`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/docs/repo_deploy_workflow_2026.md`
+  - `D+20260314+goat/micro-mirror/docs/result_micro_mirror.md`
+  - `ccrVscode/dialogue/dlg_202603141935_openai_micro_mirror_repo_deploy_guide.md`
+  - `ccrVscode/docs/target_optimization/conv_202603141935_micro_mirror_repo_deploy_guide.md`
+- decision:
+  - 单独新增一份仓库与部署工作流指南
+  - 明确当前推荐模式是“主仓库开发，部署仓库发布”
+- alternatives:
+  - 直接在对话里口头回答，不落文档
+  - 建议未来只维护 `micro-mirror-deploy`
+  - 建议立刻重构成单仓库
+- divergence:
+  - 选择“先尊重当前双仓库现实，再给长期单仓库方向”的方案
+- decision_rationale:
+  - 用户明确要求单独写一篇 md
+  - 当前 hackathon 阶段最重要的是流程稳，不是立刻重构仓库结构
+  - 需要把“以后到底改哪个仓库”说清楚，避免团队漂移
+- verification:
+  - `sed -n '1,240p' docs/repo_deploy_workflow_2026.md`
+  - `rg -n "source of truth|release mirror|只改 deploy|同步到 micro-mirror-deploy" docs/repo_deploy_workflow_2026.md`
+  - 结果:
+    - 新指南已创建
+    - 已明确写出主仓库 / 部署仓库职责边界
+    - 已明确回答“不建议只改 deploy 仓库”
+- actual_ccr_model_usage:
+  - 主侧文档整理: `Codex / GPT-5`
+- next_tasks:
+  - 同步到 `micro-mirror-deploy`
+  - 如团队继续长期维护，可补自动同步脚本或 GitHub Action
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141935_micro_mirror_repo_deploy_guide.md`
+- covered_dialogue_ids:
+  - `dlg_202603141935_openai_micro_mirror_repo_deploy_guide`
+
 ## 2026-03-14 19:26
 
 ### group_gamified_checkout_ui_upgrade
