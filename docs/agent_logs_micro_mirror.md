@@ -1,3 +1,40 @@
+## 2026-03-14 18:08
+
+### group_note_agentkit_module_principles
+- dialogue_id: `dlg_202603141808_openai_micro_mirror_note_agentkit_principles`
+- task_group: `group_note_agentkit_module_principles`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/docs/note_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror/docs/agent_logs_micro_mirror.md`
+  - `ccrVscode/dialogue/dlg_202603141808_openai_micro_mirror_note_agentkit_principles.md`
+  - `ccrVscode/docs/target_optimization/conv_202603141808_micro_mirror_note_agentkit_principles.md`
+- decision:
+  - 在 `note` 中补充主办方模块的底层原理和本项目应用价值
+  - 明确区分 `x402`、`x402-merchant`、`ERC-8004`、`wallet` 的职责边界
+- alternatives:
+  - 只给一段口头说明
+  - 继续停留在“用了 kit”但不解释模块原理
+- divergence:
+  - 不把这些内容写成营销文案，而是根据本地 `agentkit` 源码结构写成工程笔记
+- decision_rationale:
+  - 用户明确要求“在 note 这里详细解释”
+  - hackathon 现场更容易被追问“模块底层到底是什么、在你们场景里有什么用”
+- verification:
+  - `sed -n '1,260p' docs/note_micro_mirror.md`
+  - `rg -n "x402|x402-merchant|ERC-8004|wallet" docs/note_micro_mirror.md`
+  - 结果:
+    - `note` 已补充模块分层、底层原理、场景用途、当前边界
+    - 四个关键模块均已在文档中有明确说明
+- actual_ccr_model_usage:
+  - 主侧源码解读与文档编写: `Codex / GPT-5`
+- next_tasks:
+  - 如需继续冲刺，可把这份笔记再压缩成 `60` 秒 judge 快答版
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141808_micro_mirror_note_agentkit_principles.md`
+- covered_dialogue_ids:
+  - `dlg_202603141808_openai_micro_mirror_note_agentkit_principles`
+
 ## 2026-03-14 17:52
 
 ### group_pitch_vercel_and_kit_alignment
