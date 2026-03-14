@@ -6,6 +6,34 @@
 - English:
   - `Micro Mirror` is a daily camera-based health mirror that tracks recovery trends over time, gives wellness direction with both TCM and modern medical framing, and extends into a smart-ring-powered multimodal subscription service.
 
+## Vercel 部署后怎么看效果
+- 在 Vercel 项目页看到最新 deployment 状态是 `Ready`
+- 点开项目域名，一般会是 `https://xxx.vercel.app`
+- 打开后重点看这 5 个地方：
+  - 首页主视觉和产品说明是否正常加载
+  - 摄像头权限是否能弹出；如果浏览器拦摄像头，上传图片兜底是否可用
+  - 拍照或上传后，时间线是否新增一条记录
+  - 智能戒指预购区、`Connect MetaMask`、`支付预购单` 是否都能看到
+  - `GOAT / AgentKit Infra Snapshot` 是否显示 `catalog ready`
+- 如果现场要快速演示，优先用手机或带摄像头的笔记本打开这个 `vercel.app`
+
+## 主办方 Kit 对应关系
+- `x402`
+  - 对应我们的智能戒指预购支付闭环
+  - 现场可以说我们已经把前端预购和 GOAT Testnet3 钱包支付入口做出来，后端可直接接 `goat.x402.payment.create`、`goat.x402.payment.submitSignature`、`goat.x402.payment.status`
+- `x402-merchant`
+  - 对应商户侧订单、地址、统计和 webhook 能力
+  - 现场可以说后续订阅订单管理可直接接 `goat.x402.merchant.orders.list`、`goat.x402.merchant.dashboard.stats`
+- `ERC-8004`
+  - 对应未来把 `Micro Mirror` 的分析 agent 或恢复教练 agent 注册成链上身份
+  - 现场可以说这让健康建议服务不只是一个页面，而是可注册、可追踪、可积累信誉的 agent
+- `wallet + GOAT Testnet3`
+  - 对应现场 demo 的钱包连接和支付网络
+  - 这部分已经在 MVP 界面里可见、可演示
+- `AgentKit catalog`
+  - 我们从本地 `agentkit` 目录生成了 `generated/agentkit-catalog.json`
+  - 页面里的 `GOAT / AgentKit Infra Snapshot` 会直接展示 `x402`、`x402-merchant`、`erc8004`、`wallet` 的覆盖情况
+
 ## 5 分钟演讲稿
 
 大家好，我们的项目叫 `Micro Mirror`。
@@ -22,8 +50,16 @@
 
 在商业层面，这个结构也很自然。基础版可以是低门槛的日常记录工具，先帮助用户建立镜像习惯和健康反馈感；进阶版通过智能戒指，把产品从“只看脸”升级成“多模态恢复镜像”；再往后，用户还可以继续叠加季度复盘、长期健康订阅，甚至更完整的检测服务。
 
-技术上，我们这次黑客松的 MVP 重点不是吹一个很重的医学模型，而是先把这个产品闭环跑通。我们已经把每日拍照、时间线、本地报告生成、智能戒指预购和支付路径做到了一个能现场演示的单页 MVP。同时，我们保留了 GOAT 和 AgentKit 的基础设施叙事，让这个项目不只是产品概念，也具备支付和订购闭环的可扩展性。
+技术上，我们这次黑客松的 MVP 重点不是吹一个很重的医学模型，而是先把这个产品闭环跑通。我们已经把每日拍照、时间线、本地报告生成、智能戒指预购和支付路径做到了一个能现场演示的单页 MVP。
+
+在主办方 kit 的使用上，我们不是只贴了一个 logo。第一，我们把 `GOAT Testnet3` 的钱包和支付入口直接放进了预购流程，现场可以演示智能戒指如何完成链上支付闭环。第二，我们把 `AgentKit` 里的 `x402` 和 `x402-merchant` 相关能力映射到这个产品里，意味着从支付 intent、签名确认到订单状态、商户管理，这条链路在产品叙事上是完整的。第三，我们把 `ERC-8004` 作为后续健康分析 agent 的身份层来讲，这样 `Micro Mirror` 未来不只是一个页面，而是一个可以被注册、追踪和积累信誉的健康 agent 服务。为了让 judge 看得更清楚，我们还把本地 `agentkit` 仓库扫描成 `catalog`，直接展示在页面里的 `GOAT / AgentKit Infra Snapshot` 区块。
 
 所以如果用一句话总结，`Micro Mirror` 想做的是：让健康管理从“偶尔想起来一次”变成“每天照镜子就能看到趋势，并知道下一步该做什么”。
 
 谢谢大家。
+
+## Judge 快答版
+- 中文：
+  - 我们用 `x402` 做智能戒指预购支付闭环，用 `x402-merchant` 对接订单和商户能力，用 `ERC-8004` 作为未来健康分析 agent 的链上身份层，再用 `GOAT Testnet3` 做现场支付演示，所以这不是一个纯概念页，而是已经对齐主办方基础设施的健康订阅 MVP。
+- English:
+  - We use `x402` for the smart ring preorder payment flow, `x402-merchant` for merchant and order operations, `ERC-8004` as the future on-chain identity layer for our health agent, and `GOAT Testnet3` for the live payment demo, so this is not just a concept page but a health subscription MVP aligned with the organizer's infrastructure.

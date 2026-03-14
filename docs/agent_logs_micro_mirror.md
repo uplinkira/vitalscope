@@ -1,3 +1,41 @@
+## 2026-03-14 17:52
+
+### group_pitch_vercel_and_kit_alignment
+- dialogue_id: `dlg_202603141752_openai_micro_mirror_vercel_view_and_kit_pitch`
+- task_group: `group_pitch_vercel_and_kit_alignment`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/docs/pitch_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror/docs/result_micro_mirror.md`
+  - `ccrVscode/dialogue/dlg_202603141752_openai_micro_mirror_vercel_view_and_kit_pitch.md`
+  - `ccrVscode/docs/target_optimization/conv_202603141752_micro_mirror_vercel_view_and_kit_pitch.md`
+- decision:
+  - 补充 Vercel 部署完成后的查看路径和检查点
+  - 把演讲稿升级为可明确说明 `x402`、`x402-merchant`、`ERC-8004`、`GOAT Testnet3` 的版本
+- alternatives:
+  - 只在对话里口头说明，不写入项目文档
+  - 继续泛泛地说“用了 AgentKit”，不点具体模块
+- divergence:
+  - 选择把“已落地能力”和“下一步可直接接入能力”分开写，避免为拿分而夸大实现范围
+- decision_rationale:
+  - 用户当前最需要的是现场能直接拿来讲、拿来查的材料
+  - hackathon judge 通常会追问是否真的用了主办方 kit，因此需要给出明确模块映射
+- verification:
+  - `sed -n '1,260p' docs/pitch_micro_mirror.md`
+  - `sed -n '1,220p' docs/result_micro_mirror.md`
+  - `git diff -- docs/pitch_micro_mirror.md docs/result_micro_mirror.md`
+  - 结果:
+    - `pitch` 文档已补充 Vercel 检查步骤和 kit 对应关系
+    - `result` 文档已补充上线检查与 judge 快速口径
+- actual_ccr_model_usage:
+  - 主侧文档更新: `Codex / GPT-5`
+- next_tasks:
+  - 用户若拿到具体 `vercel.app` 域名，可继续补最终提交通用文案
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141752_micro_mirror_vercel_view_and_kit_pitch.md`
+- covered_dialogue_ids:
+  - `dlg_202603141752_openai_micro_mirror_vercel_view_and_kit_pitch`
+
 ## 2026-03-14 17:18
 
 ### group_mvp_folder_setup
