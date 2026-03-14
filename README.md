@@ -28,6 +28,13 @@ python3 -m http.server 8000
 ## 当前 GitHub 仓库
 - `https://github.com/uplinkira/micro-mirror.git`
 
+## Vercel 部署
+- 已补 `vercel.json`
+- 仓库已推到 GitHub，可直接导入
+- 一键导入链接：
+  - `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
+- 当前这台机器没有现成 Vercel 登录态，所以 CLI 无法直接完成发布
+
 ## 建议你最后提交的内容
 - GitHub 仓库链接
 - 可访问的 demo 链接或本地演示说明

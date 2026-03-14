@@ -97,3 +97,37 @@
 - added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141725_micro_mirror_git_publish.md`
 - covered_dialogue_ids:
   - `dlg_202603141725_openai_micro_mirror_git_publish`
+
+## 2026-03-14 17:34
+
+### group_vercel_prep
+- dialogue_id: `dlg_202603141734_openai_micro_mirror_vercel_prep`
+- task_group: `group_vercel_prep`
+- changed_paths:
+  - `vercel.json`
+  - `README.md`
+- decision:
+  - 为静态站补最小 `vercel.json`
+  - 把可直接导入的 Vercel 链接写进 `README.md`
+- alternatives:
+  - 不加配置，直接裸导入
+  - 继续只停留在 GitHub 仓库，不处理 `vercel.app`
+- divergence:
+  - 尝试了 CLI 发布，但机器上没有 Vercel 凭证
+  - 当前转为“仓库已准备完成 + 可一键导入”的最短路径
+- decision_rationale:
+  - 用户看到别人都交 `vercel.app`
+  - 当前项目是纯静态站，Vercel 很适合直接托管
+- verification:
+  - `./node_modules/.bin/vercel --version`
+  - `./node_modules/.bin/vercel whoami`
+  - `git push`
+  - 结果:
+    - CLI 可用：`Vercel CLI 48.4.1`
+    - 登录检查失败：`No existing credentials found`
+    - `vercel.json` 已推送到 GitHub
+- actual_ccr_model_usage:
+  - 主侧实现与验证: `Codex / GPT-5`
+- next_tasks:
+  - 用户若登录 Vercel 或提供 `VERCEL_TOKEN`，可立即完成正式部署
+  - 否则直接用 README 中的一键导入链接完成网页侧导入
