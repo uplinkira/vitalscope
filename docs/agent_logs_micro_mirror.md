@@ -1,3 +1,48 @@
+## 2026-03-14 18:26
+
+### group_deploy_repo_sync
+- dialogue_id: `dlg_202603141826_openai_micro_mirror_deploy_repo_sync`
+- task_group: `group_deploy_repo_sync`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/docs/result_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror-deploy/*`
+  - `ccrVscode/dialogue/dlg_202603141826_openai_micro_mirror_deploy_repo_sync.md`
+  - `ccrVscode/docs/target_optimization/conv_202603141826_micro_mirror_deploy_repo_sync.md`
+- decision:
+  - 保留当前主开发仓库 `micro-mirror`
+  - 把其最新稳定版本同步到已绑定 Vercel 的仓库 `micro-mirror-deploy`
+- alternatives:
+  - 直接修改原仓库远端
+  - 手工逐文件复制到部署仓库
+- divergence:
+  - 选择单独 clone 部署仓库并同步内容，避免破坏原仓库远端配置
+- decision_rationale:
+  - 用户明确给出了已成功部署 Vercel 的目标仓库
+  - 该仓库已经绑定线上部署，最稳妥的刷新路径就是同步现有成品并单独提交
+- verification:
+  - `git clone https://github.com/uplinkira/micro-mirror-deploy.git D+20260314+goat/micro-mirror-deploy`
+  - `rsync -a --exclude '.git' --exclude 'node_modules' D+20260314+goat/micro-mirror/ D+20260314+goat/micro-mirror-deploy/`
+  - `awk '/<script type=\"module\">/{flag=1;next}/<\\/script>/{flag=0}flag' D+20260314+goat/micro-mirror-deploy/index.html > /tmp/micro_mirror_deploy_check.mjs && node --check /tmp/micro_mirror_deploy_check.mjs`
+  - `python3 -m http.server 8033`
+  - `curl -I http://127.0.0.1:8033/`
+  - `curl -I http://127.0.0.1:8033/generated/agentkit-demo.json`
+  - `git -C D+20260314+goat/micro-mirror-deploy status --short`
+  - 结果:
+    - 部署仓库已 clone 成功
+    - 内容同步成功，包含 `generated/agentkit-demo.json` 和 `scripts/generate-agentkit-demo-assets.mjs`
+    - 页面脚本语法检查通过
+    - 静态首页和新增 JSON 资源均返回 `HTTP/1.0 200 OK`
+- actual_ccr_model_usage:
+  - 主侧同步与验证: `Codex / GPT-5`
+- next_tasks:
+  - 提交并推送 `micro-mirror-deploy`
+  - 等待 Vercel 自动重新部署并拿线上链接确认
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603141826_micro_mirror_deploy_repo_sync.md`
+- covered_dialogue_ids:
+  - `dlg_202603141826_openai_micro_mirror_deploy_repo_sync`
+
 ## 2026-03-14 18:18
 
 ### group_agentkit_demo_upgrade

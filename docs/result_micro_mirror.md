@@ -6,6 +6,12 @@
 ## 当前仓库
 - `https://github.com/uplinkira/micro-mirror.git`
 
+## 部署仓库
+- `https://github.com/uplinkira/micro-mirror-deploy.git`
+- 用途：
+  - 绑定已成功上线的 Vercel 项目
+  - 当需要快速刷新线上 demo 时，把主仓库当前稳定版本同步到这个仓库
+
 ## Vercel 快速入口
 - 一键导入：
   - `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
