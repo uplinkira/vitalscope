@@ -1,3 +1,57 @@
+## 2026-03-14 22:28
+
+### group_readme_license_and_vercel_workflow_refresh
+- dialogue_id: `dlg_202603142228_openai_micro_mirror_readme_license_workflow_refresh`
+- task_group: `group_readme_license_and_vercel_workflow_refresh`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/README.md`
+  - `D+20260314+goat/micro-mirror/LICENSE`
+  - `D+20260314+goat/micro-mirror/docs/repo_deploy_workflow_2026.md`
+  - `D+20260314+goat/micro-mirror/docs/result_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror/docs/reportRef_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror/docs/vercel_token_guide.md`
+  - `ccrVscode/dialogue/dlg_202603142228_openai_micro_mirror_readme_license_workflow_refresh.md`
+  - `ccrVscode/docs/target_optimization/conv_202603142228_micro_mirror_readme_license_workflow_refresh.md`
+- decision:
+  - 重写 `README.md`，改成更正式的公开仓库说明
+  - 把 `VERCEL_TOKEN` 手册合并进 `docs/repo_deploy_workflow_2026.md`
+  - 删除独立的 `docs/vercel_token_guide.md`
+  - 为仓库新增 `Apache-2.0` 许可证
+- alternatives:
+  - 只在 README 里简单补几行，不改整体结构
+  - 保留两份 Vercel 文档继续并存
+  - 使用 `MIT` 或继续不放许可证
+- divergence:
+  - 选择“README 正式化 + 工作流合并 + Apache-2.0”的一体化方案
+- decision_rationale:
+  - 用户明确要求把 Vercel 绑定主仓库的做法写清楚，并把 token 文档合并
+  - 用户要求 README 更正式，并明确说明深圳 sprint 与协作背景
+  - `Apache-2.0` 更适合未来比赛延展和商业化代码使用场景
+- verification:
+  - `sed -n '1,260p' README.md`
+  - `sed -n '1,320p' docs/repo_deploy_workflow_2026.md`
+  - `rg -n 'source of truth|release mirror|只改 Vercel|micro-mirror-deploy' docs/repo_deploy_workflow_2026.md`
+  - `test -f LICENSE`
+  - `test ! -e docs/vercel_token_guide.md`
+  - `rg -n "vercel_token_guide\\.md|VERCEL_TOKEN 获取与部署手册" -S .`
+  - 结果:
+    - `README.md` 已重写为正式项目说明
+    - Vercel / token / 单仓库迁移说明已合并到单一文档
+    - `LICENSE` 已新增
+    - 独立 `docs/vercel_token_guide.md` 已删除
+    - 新的工作流文档已明确说明如何把 Vercel 直接绑定到 `micro-mirror`
+- actual_ccr_model_usage:
+  - 主侧实现与文档整理: `Codex / GPT-5`
+- next_tasks:
+  - 提交并推送 `micro-mirror`
+  - 同步到 `micro-mirror-deploy`
+  - 推送部署仓库，等待 Vercel 自动刷新
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603142228_micro_mirror_readme_license_workflow_refresh.md`
+- covered_dialogue_ids:
+  - `dlg_202603142228_openai_micro_mirror_readme_license_workflow_refresh`
+
 ## 2026-03-14 19:35
 
 ### group_repo_deploy_workflow_guide

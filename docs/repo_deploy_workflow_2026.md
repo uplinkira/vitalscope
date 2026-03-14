@@ -1,95 +1,228 @@
-# Micro Mirror 2026 仓库与部署工作流指南
+# Micro Mirror 2026 GitHub + Vercel Workflow Guide
 
-## 先说结论
-- 对你们这个项目，当前最稳的做法不是“以后只改 Vercel 仓库”。
-- 正确做法是：
-  - `micro-mirror` 继续作为唯一主开发仓库
-  - `micro-mirror-deploy` 继续作为已绑定 Vercel 的部署镜像仓库
-  - 平时先改 `micro-mirror`
-  - 只有当你们准备发布一个稳定演示版本时，再同步到 `micro-mirror-deploy`
+## TL;DR
 
-## 为什么这是 2026 更好的做法
-- 开发仓库和部署仓库职责分离后，最怕的是两边都改，最后内容漂移。
-- 如果只改 `micro-mirror-deploy`：
-  - Vercel 线上会更新
-  - 但主代码仓库会落后
-  - 后续再开发时，很容易不知道哪个才是真正最新版本
-- 如果只改 `micro-mirror` 而不部署：
-  - 代码是干净的
-  - 但线上 demo 不会更新
-- 所以最稳的策略是：
-  - 主仓库存“真相”
-  - 部署仓库存“可上线快照”
+If you want the most stable hackathon workflow right now:
+- keep `micro-mirror` as the main development repository
+- keep `micro-mirror-deploy` as the production mirror
+- only sync to `micro-mirror-deploy` when you want to refresh the live Vercel demo
 
-## 你们现在应该采用的模式
+If you want the cleaner long-term 2026 setup:
+- keep only `micro-mirror`
+- bind Vercel directly to `micro-mirror`
+- let pushes to `main` trigger production deployment automatically
 
-## 模式 A：Hackathon 最佳现实方案
-- 适合你们现在
-- 继续保持双仓库
-- 工作方式：
-  - 所有功能开发都在 `micro-mirror`
-  - 本地验证通过后，提交到 `micro-mirror`
-  - 需要刷新线上 demo 时，再把 `micro-mirror` 同步到 `micro-mirror-deploy`
-  - push `micro-mirror-deploy`，触发 Vercel 自动部署
+This file now also includes the old `VERCEL_TOKEN` guide, so you do not need a separate `vercel_token_guide.md`.
 
-### 这个模式的优点
-- 不会把“开发中半成品”直接丢到线上
-- 线上永远是一个可演示快照
-- 讲 hackathon 时更稳，不容易线上翻车
+## Current Recommended Mode For This Team
 
-### 这个模式的缺点
-- 你们要记得同步两次
-- 如果团队成员直接在 deploy 仓库热修，会造成漂移
+### Why not only edit the Vercel repo
 
-## 模式 B：2026 长期最佳方案
-- 真正长期更推荐的是：
-  - 只保留一个主仓库
-  - 让 Vercel 直接绑定 `micro-mirror`
-- 或者：
-  - 保留双仓库
-  - 但用 GitHub Action 自动把 `micro-mirror` 同步到 `micro-mirror-deploy`
+Do not use `micro-mirror-deploy` as the main coding repo.
 
-### 为什么长期更推荐单仓库
-- 少一个同步步骤
-- 少一个“哪个仓库才是最新”的判断成本
-- 团队协作更清晰
-- 发布历史和代码历史天然一致
+If you only edit the deployment repo:
+- Vercel updates
+- but your real source history drifts
+- future development becomes confusing
 
-### 为什么你们现在不一定马上改成单仓库
-- 当前 `micro-mirror-deploy` 已经绑定 Vercel，正在稳定工作
-- hackathon 期间最重要的是：
-  - 少改基础设施
-  - 少冒风险
-  - 先保证线上 demo 一直能用
+The safest current rule is:
+- `micro-mirror` = source of truth
+- `micro-mirror-deploy` = release mirror
 
-## 所以你问的那个核心问题，直接回答
+### Current Best Practice
 
-## q1: 后续只更 `vercel` 仓库吗？
-- 不建议。
-- `micro-mirror-deploy` 不应该成为主开发仓库。
-- 它应该只是“发布仓库”。
+Daily development:
+1. edit `micro-mirror`
+2. verify locally
+3. commit and push `micro-mirror`
 
-## q2: 还是继续更新原来的代码仓库，只在要部署的时候重新上传一遍？
-- 对，这就是你们现在最推荐的做法。
-- 也就是：
-  - 平时一直改 `micro-mirror`
-  - 需要上线时，再同步到 `micro-mirror-deploy`
+When you want a live demo refresh:
+1. sync `micro-mirror` into `micro-mirror-deploy`
+2. commit and push `micro-mirror-deploy`
+3. wait for Vercel auto-deploy
 
-## 你们之后的标准流程
+## What “Single Main Repo Bound To Vercel” Means
 
-## 日常开发
-1. 在 `micro-mirror` 里开发
-2. 本地验证
-3. 提交并 push `micro-mirror`
+In the cleaner long-term setup:
+- `micro-mirror` becomes the only active repo
+- Vercel connects directly to `https://github.com/uplinkira/micro-mirror`
+- `main` becomes the production branch
+- future pushes to `main` deploy automatically
+- pull requests can produce preview deployments
 
-## 要发布到 Vercel
-1. 确认 `micro-mirror` 已经是你们要演示的稳定版本
-2. 同步内容到 `micro-mirror-deploy`
-3. 在 `micro-mirror-deploy` 提交并 push
-4. 等 Vercel 自动部署
-5. 打开线上链接检查
+This is the 2026-default pattern because it reduces:
+- repo drift
+- manual sync work
+- release mistakes
 
-## 你们现在可以直接复用的命令
+## How To Move Vercel From `micro-mirror-deploy` To `micro-mirror`
+
+There are two practical ways.
+
+## Path A: Create a New Vercel Project From `micro-mirror`
+
+This is the cleanest and safest path.
+
+1. Open:
+   - `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
+2. Log in to Vercel
+3. Import the `micro-mirror` repository
+4. Keep the root directory as `.`
+5. Because this repo is a static site, most cases can keep default settings
+6. Deploy
+7. After the first deploy, set:
+   - Production Branch = `main`
+8. Confirm that future pushes to `main` deploy automatically
+
+Use this path if:
+- you do not care about preserving the old Vercel project identity
+- you want the simplest migration with the lowest risk
+
+## Path B: Rebind an Existing Vercel Project To `micro-mirror`
+
+Use this if you want to keep the existing Vercel project and just change the connected Git repository.
+
+1. Open the existing Vercel project
+2. Go to:
+   - `Project Settings`
+   - `Git`
+3. Find the connected Git repository section
+4. Change or reconnect the Git repository to:
+   - `uplinkira/micro-mirror`
+5. Confirm the production branch is:
+   - `main`
+6. Trigger a redeploy
+7. Push a small test commit to `micro-mirror`
+8. Verify that the deployment now comes from the main repo rather than `micro-mirror-deploy`
+
+Use this path if:
+- you want to preserve the same Vercel project shell
+- you want to keep the existing domain and project settings with minimal disruption
+
+## After The Switch
+
+Once Vercel is directly bound to `micro-mirror`, your new rule should be:
+- only develop in `micro-mirror`
+- stop treating `micro-mirror-deploy` as active
+
+Then choose one of these cleanup options:
+- archive `micro-mirror-deploy`
+- leave it read-only as a historical release mirror
+- delete it later after the team is comfortable
+
+## How To Verify The Repo Binding Worked
+
+After rebinding or creating the new project, check:
+- the Vercel dashboard shows the connected repository as `uplinkira/micro-mirror`
+- pushes to `main` in `micro-mirror` create production deployments
+- pull requests or non-production branches create preview deployments
+- the live page matches the latest commit from `micro-mirror`
+
+## Vercel Token Guide, Merged Here
+
+## Fastest Path If You Just Need A `vercel.app`
+
+Open:
+- `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
+
+Then:
+- log in
+- import the repo
+- click `Deploy`
+
+## How To Get `VERCEL_TOKEN`
+
+### Option A: Create an Access Token in the Vercel Dashboard
+
+1. Log in to `https://vercel.com`
+2. Open your account settings
+3. Go to the token page
+4. Create a new access token
+5. Copy it immediately
+6. Do not commit it to GitHub
+
+### Option B: Browser Login Then CLI Login
+
+```bash
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+./node_modules/.bin/vercel login
+```
+
+Then follow the CLI prompts.
+
+## How To Deploy With `VERCEL_TOKEN`
+
+### Method 1: Environment Variable
+
+```bash
+export VERCEL_TOKEN="your_token_here"
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+./node_modules/.bin/vercel --prod --token "$VERCEL_TOKEN"
+```
+
+### Method 2: Inline Token
+
+```bash
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+./node_modules/.bin/vercel --prod --token "your_token_here"
+```
+
+## How To Link A Local Repo To A Vercel Project With CLI
+
+If the project already exists in Vercel and you want the local repo connected cleanly:
+
+```bash
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+./node_modules/.bin/vercel link
+```
+
+If you need to connect a Git repository through CLI-assisted flow:
+
+```bash
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+./node_modules/.bin/vercel git connect
+```
+
+## Recommended Production Release Steps
+
+1. Make sure `micro-mirror` is up to date
+
+```bash
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+git pull
+```
+
+2. Deploy with token
+
+```bash
+./node_modules/.bin/vercel --prod --token "$VERCEL_TOKEN"
+```
+
+3. If the CLI asks:
+- `Set up and deploy?` choose `Y`
+- choose the correct personal scope or team
+- if it asks whether to link to an existing project, choose according to your current setup
+- keep the root directory as `.`
+
+## Local Preview
+
+```bash
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+python3 -m http.server 8000
+```
+
+Open:
+- `http://127.0.0.1:8000`
+
+On macOS:
+
+```bash
+open http://127.0.0.1:8000
+```
+
+## Current Repo Commands
+
+### Main Repo Development
 
 ```bash
 cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
@@ -97,6 +230,8 @@ git add .
 git commit -m "your update"
 git push origin main
 ```
+
+### Sync To Deploy Mirror
 
 ```bash
 rsync -a --exclude '.git' --exclude 'node_modules' \
@@ -111,43 +246,32 @@ git commit -m "deploy latest stable demo"
 git push origin main
 ```
 
-## 哪些情况可以直接改 deploy 仓库
-- 只有一种情况可以接受：
-  - 线上 demo 正在演示前夕
-  - 必须做一个极小热修
-  - 来不及走完整主仓库流程
+## When It Is Acceptable To Patch The Deploy Repo Directly
 
-## 但即使这样也必须补做一件事
-- 你改完 `micro-mirror-deploy` 后，必须立刻把同样修改回写到 `micro-mirror`
-- 否则后面一定会漂移
+Only in an emergency:
+- you are minutes away from a live demo
+- the fix is extremely small
+- you truly cannot wait
 
-## 一条很重要的团队规则
-- 永远默认：
-  - `micro-mirror` 是 source of truth
-  - `micro-mirror-deploy` 是 release mirror
+If that happens:
+- patch `micro-mirror-deploy`
+- deploy
+- immediately back-port the same change to `micro-mirror`
 
-## 最推荐的协作口径
-- 讨论功能时，只看 `micro-mirror`
-- 讨论线上展示时，只看 `micro-mirror-deploy`
-- 讨论“最新开发进展”时，以 `micro-mirror` 为准
-- 讨论“当前可公开演示版本”时，以 `micro-mirror-deploy` 为准
+Otherwise drift is guaranteed.
 
-## 未来如果你们还继续做这个项目
-- 第一优先级：
-  - 把 Vercel 直接绑定 `micro-mirror`
-- 第二优先级：
-  - 如果还想保留 deploy 仓库，就加自动同步，而不是手工同步
-- 第三优先级：
-  - 引入 preview branch / staging，而不是每次都只靠 `main`
+## Final Recommendation
 
-## 对你们当前项目的最终建议
-- 短期：
-  - 继续双仓库
-  - 主仓库开发，部署仓库发布
-- 中期：
-  - 尽量不要在 deploy 仓库独立开发
-- 长期：
-  - 改成单仓库直连 Vercel，或者自动镜像同步
+Short term:
+- keep the current dual-repo setup because it is already working
 
-## 一句话版本
-- 2026 对你们最合适的不是“以后只改 Vercel 仓库”，而是“继续把 `micro-mirror` 当主仓库，只在要发布稳定演示版本时同步到 `micro-mirror-deploy`”。 
+Medium term:
+- stop adding independent edits to the deploy mirror
+
+Long term:
+- bind Vercel directly to `micro-mirror`
+- archive `micro-mirror-deploy`
+
+## One-Sentence Version
+
+The best 2026 setup for this project is not “edit the Vercel repo forever”, but “move Vercel to the main `micro-mirror` repository and let that repository become the single source of truth.”

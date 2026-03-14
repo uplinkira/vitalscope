@@ -5,6 +5,8 @@
 
 ## 当前仓库
 - `https://github.com/uplinkira/micro-mirror.git`
+- 许可证：
+  - `Apache-2.0`
 
 ## 部署仓库
 - `https://github.com/uplinkira/micro-mirror-deploy.git`
@@ -64,9 +66,7 @@
 ## 可直接复制的材料
 - 项目一句话概括与 5 分钟演讲稿：
   - `docs/pitch_micro_mirror.md`
-- `VERCEL_TOKEN` 获取与部署手册：
-  - `docs/vercel_token_guide.md`
-- 仓库与部署工作流指南：
+- GitHub / Vercel / `VERCEL_TOKEN` / 单仓库迁移指南：
   - `docs/repo_deploy_workflow_2026.md`
 
 ## AgentKit 资产刷新命令
