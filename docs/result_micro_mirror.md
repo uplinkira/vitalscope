@@ -25,6 +25,12 @@
 - GOAT Testnet3 支付
 - AgentKit 覆盖面说明
 
+## 可直接复制的材料
+- 项目一句话概括与 5 分钟演讲稿：
+  - `docs/pitch_micro_mirror.md`
+- `VERCEL_TOKEN` 获取与部署手册：
+  - `docs/vercel_token_guide.md`
+
 ## 最终提交方向
 - `1+requirement.md` 中的 `Submission link`
 - 建议同时提供：

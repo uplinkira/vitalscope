@@ -131,3 +131,27 @@
 - next_tasks:
   - 用户若登录 Vercel 或提供 `VERCEL_TOKEN`，可立即完成正式部署
   - 否则直接用 README 中的一键导入链接完成网页侧导入
+
+## 2026-03-14 17:41
+
+### group_pitch_and_token_docs
+- dialogue_id: `dlg_202603141741_openai_micro_mirror_pitch_and_token_docs`
+- task_group: `group_pitch_and_token_docs`
+- changed_paths:
+  - `docs/pitch_micro_mirror.md`
+  - `docs/vercel_token_guide.md`
+- decision:
+  - 直接补一份中英文一句话概括和 5 分钟演讲稿
+  - 直接补一份 `VERCEL_TOKEN` 获取与部署手册
+- decision_rationale:
+  - 用户当前最需要的是能复制出去用的内容，而不是继续讨论
+  - 这些材料同时服务于现场 demo 和最终提交
+- verification:
+  - `sed -n '1,80p' docs/pitch_micro_mirror.md`
+  - `sed -n '1,120p' docs/vercel_token_guide.md`
+  - 结果:
+    - 两份文档均已生成并可直接使用
+- actual_ccr_model_usage:
+  - 主侧文档编写: `Codex / GPT-5`
+- next_tasks:
+  - 若用户拿到 `VERCEL_TOKEN`，继续完成正式部署
