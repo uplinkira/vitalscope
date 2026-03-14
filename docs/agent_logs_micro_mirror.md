@@ -1,3 +1,51 @@
+## 2026-03-15 00:46
+
+### group_git_author_rewrite_to_uplinkira
+- dialogue_id: `dlg_202603150046_openai_micro_mirror_git_author_rewrite`
+- task_group: `group_git_author_rewrite_to_uplinkira`
+- changed_paths:
+  - `D+20260314+goat/micro-mirror/.git history`
+  - `D+20260314+goat/micro-mirror-deploy/.git history`
+  - `D+20260314+goat/micro-mirror/docs/agent_logs_micro_mirror.md`
+  - `ccrVscode/dialogue/dlg_202603150046_openai_micro_mirror_git_author_rewrite.md`
+  - `ccrVscode/docs/target_optimization/conv_202603150046_micro_mirror_git_author_rewrite.md`
+- decision:
+  - 将两个仓库里作者名为 `Tooth-888` 的提交统一重写为 `uplinkira`
+  - 将仓库本地 git 配置也改成：
+    - `user.name = uplinkira`
+    - `user.email = 88101055+uplinkira@users.noreply.github.com`
+- alternatives:
+  - 仅修改当前 git config，不重写历史
+  - 只改主仓库，不改部署仓库
+  - 保留现有提交名，只依赖 GitHub 邮箱映射
+- divergence:
+  - 选择直接重写历史并强推两个远端
+- decision_rationale:
+  - 用户明确要求把 `Tooth-888` 上传的部分改为 `uplinkira`
+  - 仅改未来配置不能修复已经推送的提交作者名
+  - 两个仓库都公开可见，因此需要统一处理
+- verification:
+  - `git log --pretty=format:'%h%x09%an%x09%ae%x09%ad%x09%s' --date=short`
+  - `git config user.name`
+  - `git config user.email`
+  - `git push --force origin main`
+  - `git ls-remote origin refs/heads/main`
+  - 结果:
+    - 主仓库最新历史已改写为 `uplinkira`
+    - 部署仓库最新历史已改写为 `uplinkira`
+    - 主仓库远端 `main` 已更新到 `598aeac`
+    - 部署仓库远端已强推到以 `8a1af43` 为头的新历史
+- actual_ccr_model_usage:
+  - 主侧 git 重写与验证: `Codex / GPT-5`
+- next_tasks:
+  - 等 GitHub 页面与 contributor 统计刷新
+  - 若还要统一更早的其他仓库身份，可复用同样流程
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603150046_micro_mirror_git_author_rewrite.md`
+- covered_dialogue_ids:
+  - `dlg_202603150046_openai_micro_mirror_git_author_rewrite`
+
 ## 2026-03-14 22:28
 
 ### group_readme_license_and_vercel_workflow_refresh
