@@ -1,0 +1,2014 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Micro Mirror MVP</title>
+<style>
+  :root {
+    --bg: #f2efe8;
+    --paper: rgba(255, 251, 244, 0.9);
+    --panel: rgba(255, 248, 238, 0.88);
+    --panel-strong: rgba(255, 245, 231, 0.96);
+    --ink: #1f2a21;
+    --muted: #6a756c;
+    --line: rgba(42, 55, 45, 0.12);
+    --sage: #486a57;
+    --jade: #6e9b78;
+    --amber: #c98e45;
+    --rose: #c86f5d;
+    --sky: #6f8ea5;
+    --glow: 0 24px 50px rgba(51, 47, 37, 0.1);
+    --radius: 24px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--ink);
+    font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(110, 155, 120, 0.18), transparent 30%),
+      radial-gradient(circle at top right, rgba(201, 142, 69, 0.15), transparent 28%),
+      linear-gradient(180deg, #f6f2ea 0%, #ece6db 100%);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(18px);
+    background: rgba(246, 242, 234, 0.82);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 18px;
+    background: linear-gradient(135deg, var(--sage), var(--amber));
+    box-shadow: var(--glow);
+  }
+
+  .brand-copy h1 {
+    font-size: 18px;
+    letter-spacing: -0.03em;
+  }
+
+  .brand-copy p {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .badge,
+  .tiny-btn,
+  .chip {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.58);
+  }
+
+  .badge {
+    padding: 7px 11px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .tiny-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+    text-decoration: none;
+  }
+
+  main {
+    width: min(1360px, calc(100vw - 28px));
+    margin: 0 auto;
+    padding: 24px 0 42px;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.25fr 0.95fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: var(--glow);
+    overflow: hidden;
+  }
+
+  .hero-card {
+    position: relative;
+    padding: 26px;
+    background:
+      radial-gradient(circle at bottom right, rgba(110, 155, 120, 0.16), transparent 34%),
+      linear-gradient(180deg, rgba(255, 251, 244, 0.98), rgba(255, 247, 236, 0.95));
+  }
+
+  .eyebrow {
+    color: var(--sage);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hero-card h2 {
+    max-width: 760px;
+    margin-top: 12px;
+    font-size: clamp(34px, 4vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-card p {
+    max-width: 760px;
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 16px;
+    color: var(--ink);
+    font: inherit;
+    background: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(62, 57, 45, 0.08);
+    border-color: rgba(72, 106, 87, 0.25);
+  }
+
+  .btn.primary {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--sage), var(--amber));
+  }
+
+  .btn.secondary {
+    background: rgba(110, 142, 165, 0.08);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .summary-box {
+    padding: 18px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.62);
+  }
+
+  .summary-box .value {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+  }
+
+  .summary-box .label {
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .summary-box .note {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .workspace {
+    display: grid;
+    grid-template-columns: 1.04fr 0.96fr;
+    gap: 16px;
+  }
+
+  .stack {
+    display: grid;
+    gap: 16px;
+  }
+
+  .section {
+    padding: 22px;
+    background: var(--panel);
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section-head h3 {
+    font-size: 20px;
+    letter-spacing: -0.03em;
+  }
+
+  .section-head p {
+    margin-top: 7px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .mono {
+    font-family: "IBM Plex Mono", "SF Mono", "Menlo", monospace;
+  }
+
+  .camera-shell {
+    display: grid;
+    grid-template-columns: 1fr 0.86fr;
+    gap: 14px;
+  }
+
+  .preview-box {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    min-height: 420px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top, rgba(111, 142, 165, 0.18), transparent 40%),
+      linear-gradient(180deg, #efe8dc, #e2d7c6);
+  }
+
+  video,
+  canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #capture-canvas {
+    display: none;
+  }
+
+  .preview-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+  }
+
+  .guide-frame {
+    width: min(72%, 320px);
+    aspect-ratio: 0.74;
+    border-radius: 44% 44% 48% 48% / 34% 34% 56% 56%;
+    border: 1.5px dashed rgba(31, 42, 33, 0.28);
+    box-shadow: 0 0 0 999px rgba(255, 247, 236, 0.12);
+  }
+
+  .preview-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 24px;
+    color: rgba(31, 42, 33, 0.66);
+    line-height: 1.8;
+  }
+
+  .camera-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .checkin-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .field {
+    display: grid;
+    gap: 6px;
+  }
+
+  .field.two {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.72);
+    padding: 11px 13px;
+    font: inherit;
+    color: var(--ink);
+    outline: none;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: rgba(72, 106, 87, 0.3);
+  }
+
+  textarea {
+    min-height: 86px;
+    resize: vertical;
+  }
+
+  .helper {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .toggle-row,
+  .range-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  input[type="range"] {
+    padding: 0;
+    background: transparent;
+    border: 0;
+  }
+
+  .range-value {
+    min-width: 46px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.74);
+    text-align: center;
+    font-size: 12px;
+  }
+
+  .timeline-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 82px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.62);
+    cursor: pointer;
+  }
+
+  .timeline-item.active {
+    border-color: rgba(72, 106, 87, 0.32);
+    background: rgba(110, 155, 120, 0.08);
+  }
+
+  .thumb {
+    width: 82px;
+    height: 82px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #d7d3ca;
+  }
+
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .timeline-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .timeline-meta,
+  .timeline-note {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .score-tag {
+    min-width: 64px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: rgba(201, 142, 69, 0.1);
+    border: 1px solid rgba(201, 142, 69, 0.18);
+    text-align: center;
+  }
+
+  .score-tag strong {
+    display: block;
+    font-size: 18px;
+  }
+
+  .score-tag span {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .report-shell {
+    display: grid;
+    gap: 14px;
+  }
+
+  .report-top {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 14px;
+  }
+
+  .report-photo {
+    width: 140px;
+    height: 170px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #ded8cd;
+  }
+
+  .report-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .focus-card {
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.68);
+    padding: 16px;
+  }
+
+  .focus-card h4 {
+    font-size: 22px;
+    letter-spacing: -0.03em;
+  }
+
+  .focus-card p {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  .dual-report {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .insight-card {
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.66);
+  }
+
+  .insight-card h5 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .insight-card ul {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+  }
+
+  .insight-card li {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    padding: 7px 10px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .order-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .plan-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .plan {
+    padding: 15px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.66);
+    cursor: pointer;
+  }
+
+  .plan.active {
+    border-color: rgba(72, 106, 87, 0.3);
+    background: rgba(110, 155, 120, 0.1);
+  }
+
+  .plan strong {
+    display: block;
+    font-size: 15px;
+  }
+
+  .plan p {
+    margin-top: 7px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .order-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .code {
+    max-height: 260px;
+    overflow: auto;
+    padding: 14px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: rgba(33, 41, 36, 0.92);
+    color: #e8efe9;
+    font-size: 11px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .wallet-strip,
+  .infra-grid,
+  .mini-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .wallet-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mini-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mini-card,
+  .infra-card {
+    padding: 14px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.64);
+  }
+
+  .mini-card strong,
+  .infra-card strong {
+    display: block;
+    font-size: 14px;
+  }
+
+  .mini-card span,
+  .infra-card p,
+  .infra-card small {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .order-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .order-item {
+    padding: 14px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.64);
+  }
+
+  .order-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .status-pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid var(--line);
+  }
+
+  .status-pill.created { color: var(--sage); }
+  .status-pill.authorized { color: var(--amber); }
+  .status-pill.submitted,
+  .status-pill.pending { color: var(--sky); }
+  .status-pill.confirmed { color: var(--jade); }
+  .status-pill.cancelled,
+  .status-pill.failed { color: var(--rose); }
+
+  .toast-wrap {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    max-width: 320px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: rgba(255, 251, 244, 0.95);
+    box-shadow: var(--glow);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  footer {
+    width: min(1360px, calc(100vw - 28px));
+    margin: 0 auto 26px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: rgba(255, 249, 241, 0.84);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  footer .spacer {
+    flex: 1;
+  }
+
+  @media (max-width: 1120px) {
+    .hero,
+    .workspace,
+    .camera-shell,
+    .order-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .summary-grid,
+    .dual-report,
+    .wallet-strip,
+    .mini-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .report-top {
+      grid-template-columns: 1fr;
+    }
+
+    .report-photo {
+      width: 100%;
+      height: 260px;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">MM</div>
+    <div class="brand-copy">
+      <h1>Micro Mirror</h1>
+      <p>每天拍一张脸，看见恢复趋势，再决定下一步养护与订购服务。</p>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="badge">camera timeline</div>
+    <div class="badge">TCM + modern reference</div>
+    <div class="badge">smart ring preorder</div>
+    <a class="tiny-btn" href="../1+requirement.md">需求</a>
+    <a class="tiny-btn" href="../prd.md">PRD</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <article class="card hero-card">
+      <div class="eyebrow">Micro Mirror MVP</div>
+      <h2>把“每天一张镜像”变成长期保健决策，而不是一次性焦虑。</h2>
+      <p>
+        基础版用摄像头做每日面部采集，结合睡眠、压力、补水与时间线变化，生成一个“疾病预防 / 保健方向”提示。
+        报告同时提供中医面诊思路和现代医学报告式参照。进阶版接入智能戒指，把 HRV、静息心率、睡眠恢复等生理信号一起拉进来，
+        让订阅服务不只是卖硬件，而是卖持续观察与行动建议。
+      </p>
+      <div class="hero-actions">
+        <button class="btn primary" id="hero-start-camera">开始今日拍摄</button>
+        <button class="btn secondary" id="hero-capture">保存今日镜像</button>
+        <button class="btn" id="scroll-order">去看戒指订购</button>
+      </div>
+    </article>
+
+    <article class="card hero-card">
+      <div class="section-head">
+        <div>
+          <h3>今日概览</h3>
+          <p>基于最近一次采集和最近 7 天趋势的 MVP 提示。</p>
+        </div>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="value" id="hero-score">--</div>
+          <div class="label">恢复指数</div>
+          <div class="note" id="hero-focus">等待第一次镜像采集。</div>
+        </div>
+        <div class="summary-box">
+          <div class="value" id="hero-streak">0</div>
+          <div class="label">连续记录天数</div>
+          <div class="note" id="hero-confidence">当前只展示 MVP 本地记录。</div>
+        </div>
+        <div class="summary-box">
+          <div class="value" id="hero-track">camera</div>
+          <div class="label">数据模式</div>
+          <div class="note" id="hero-trend">还没有足够样本做趋势判断。</div>
+        </div>
+        <div class="summary-box">
+          <div class="value" id="hero-plan">199</div>
+          <div class="label">Ring Beta / USDC</div>
+          <div class="note">下方可以直接走 GOAT Testnet3 的预购支付流程。</div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="workspace">
+    <div class="stack">
+      <article class="card section">
+        <div class="section-head">
+          <div>
+            <h3>Daily Mirror</h3>
+            <p>同一角度、同一光线、同一时间段，才能让时间线真正可比。MVP 支持实时摄像头和图片上传兜底。</p>
+          </div>
+          <div class="badge mono" id="capture-mode">camera offline</div>
+        </div>
+        <div class="camera-shell">
+          <div>
+            <div class="preview-box">
+              <video id="camera-feed" autoplay playsinline muted></video>
+              <canvas id="capture-canvas" width="720" height="960"></canvas>
+              <div class="preview-empty" id="preview-empty">
+                <div>
+                  <strong>今天先拍一张正脸。</strong>
+                  <div>建议自然光、素颜、面部置中。</div>
+                </div>
+              </div>
+              <div class="preview-overlay"><div class="guide-frame"></div></div>
+            </div>
+            <div class="camera-actions">
+              <button class="btn primary" id="start-camera">启动摄像头</button>
+              <button class="btn" id="capture-photo">保存今日镜像</button>
+              <button class="btn secondary" id="upload-trigger">上传图片兜底</button>
+              <button class="btn" id="stop-camera">关闭摄像头</button>
+              <input id="upload-photo" type="file" accept="image/*" capture="user" hidden>
+            </div>
+          </div>
+
+          <div class="checkin-grid">
+            <div class="field">
+              <label>睡眠时长</label>
+              <div class="range-row">
+                <input id="sleep-hours" type="range" min="3" max="10" step="0.5" value="6.5">
+                <span class="range-value" id="sleep-hours-value">6.5h</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>压力感受</label>
+              <div class="range-row">
+                <input id="stress-level" type="range" min="1" max="10" step="1" value="6">
+                <span class="range-value" id="stress-level-value">6/10</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>补水和皮肤舒适度</label>
+              <div class="range-row">
+                <input id="hydration-level" type="range" min="1" max="10" step="1" value="5">
+                <span class="range-value" id="hydration-level-value">5/10</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>智能戒指模式</label>
+              <div class="toggle-row">
+                <div class="helper">打开后同时记录 HRV 与静息心率。</div>
+                <input id="ring-enabled" type="checkbox">
+              </div>
+            </div>
+            <div class="field two">
+              <div>
+                <label for="ring-hrv">HRV</label>
+                <input id="ring-hrv" type="number" min="10" max="120" step="1" value="42" disabled>
+              </div>
+              <div>
+                <label for="resting-hr">静息心率</label>
+                <input id="resting-hr" type="number" min="40" max="120" step="1" value="68" disabled>
+              </div>
+            </div>
+            <div class="field">
+              <label for="entry-note">今日备注</label>
+              <textarea id="entry-note">今天工作偏满，想看恢复趋势是否在走弱。</textarea>
+            </div>
+            <p class="helper">提示：MVP 不是诊断工具，当前结论是“保健方向提示”，依赖镜像时间线 + 自填 check-in + 可选戒指数据。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="card section">
+        <div class="section-head">
+          <div>
+            <h3>Time Mirror Timeline</h3>
+            <p>点击任意一天切换右侧报告。第一次打开会自动带入样例记录，方便直接演示。</p>
+          </div>
+          <div class="badge mono" id="timeline-count">0 records</div>
+        </div>
+        <div class="timeline-list" id="timeline-list"></div>
+      </article>
+    </div>
+
+    <div class="stack">
+      <article class="card section">
+        <div class="section-head">
+          <div>
+            <h3>Dual-Reference Health Direction</h3>
+            <p>同一条趋势，同时给出中医理论提示和现代医学报告式参照，便于用户理解下一步应该养护什么。</p>
+          </div>
+          <div class="badge mono" id="report-status">waiting</div>
+        </div>
+        <div class="report-shell">
+          <div class="report-top">
+            <div class="report-photo"><img id="report-photo" alt="record preview"></div>
+            <div class="focus-card">
+              <div class="helper mono" id="report-date">尚未选择记录</div>
+              <h4 id="report-focus-title">等待镜像</h4>
+              <p id="report-focus-body">保存一条记录后，这里会生成一个 7-30 天维度的保健方向提示。</p>
+              <div class="chips" id="report-chips" style="margin-top:12px"></div>
+            </div>
+          </div>
+          <div class="dual-report">
+            <div class="insight-card">
+              <h5>中医理论参照</h5>
+              <ul id="report-tcm"></ul>
+            </div>
+            <div class="insight-card">
+              <h5>现代医学报告参照</h5>
+              <ul id="report-modern"></ul>
+            </div>
+          </div>
+          <div class="insight-card">
+            <h5>接下来 7 天的实验方向</h5>
+            <ul id="report-actions"></ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="card section" id="order-section">
+        <div class="section-head">
+          <div>
+            <h3>Smart Ring Preorder</h3>
+            <p>进阶版把照片以外的恢复信号一起接入。这里直接保留 GOAT Testnet3 支付能力，方便黑客松现场演示产品订购闭环。</p>
+          </div>
+          <div class="badge mono" id="order-badge">checkout idle</div>
+        </div>
+
+        <div class="mini-grid" style="margin-bottom:14px">
+          <div class="mini-card"><strong id="wallet-address">wallet disconnected</strong><span>连接钱包后可直接支付预购单。</span></div>
+          <div class="mini-card"><strong id="wallet-network">unknown network</strong><span>目标链：GOAT Testnet3。</span></div>
+          <div class="mini-card"><strong id="wallet-balance">--</strong><span>会读取 BTC 与当前选中资产余额。</span></div>
+        </div>
+
+        <div class="order-grid">
+          <div>
+            <div class="plan-grid" id="plan-grid"></div>
+          </div>
+          <div class="checkin-grid">
+            <div class="field two">
+              <div>
+                <label for="treasury-address">项目收款钱包</label>
+                <input id="treasury-address" type="text" placeholder="0x...">
+              </div>
+              <div>
+                <label for="pay-asset">支付资产</label>
+                <select id="pay-asset"></select>
+              </div>
+            </div>
+            <div class="field two">
+              <div>
+                <label for="ring-size">戒指尺寸</label>
+                <select id="ring-size">
+                  <option value="6">US 6</option>
+                  <option value="7" selected>US 7</option>
+                  <option value="8">US 8</option>
+                  <option value="9">US 9</option>
+                  <option value="10">US 10</option>
+                </select>
+              </div>
+              <div>
+                <label for="shipping-city">收货城市</label>
+                <input id="shipping-city" type="text" value="Shenzhen">
+              </div>
+            </div>
+            <div class="field">
+              <label for="order-note">订单说明</label>
+              <textarea id="order-note">用于黑客松演示：Micro Mirror 智能戒指订购 + 健康订阅。</textarea>
+            </div>
+            <div class="order-actions">
+              <button class="btn primary" id="connect-wallet">连接 MetaMask</button>
+              <button class="btn" id="use-self-wallet">用当前钱包做收款钱包</button>
+              <button class="btn secondary" id="create-order">创建预购单</button>
+              <button class="btn" id="sign-order">签名授权</button>
+              <button class="btn primary" id="send-payment">支付预购单</button>
+              <button class="btn" id="refresh-order">刷新状态</button>
+            </div>
+            <pre class="code mono" id="order-json">创建预购单后显示订单 JSON。</pre>
+          </div>
+        </div>
+
+        <div class="section-head" style="margin-top:18px">
+          <div>
+            <h3 style="font-size:16px">Recent Orders</h3>
+            <p>本地保存，方便你现场刷新页面后继续讲订购闭环。</p>
+          </div>
+        </div>
+        <div class="order-list" id="order-list"></div>
+      </article>
+
+      <article class="card section">
+        <div class="section-head">
+          <div>
+            <h3>GOAT / AgentKit Infra Snapshot</h3>
+            <p>这块不是用户主视角，但对 hackathon judge 很关键：我们不是只做了概念页，而是把支付基础设施和组件覆盖面讲清楚了。</p>
+          </div>
+          <div class="badge mono" id="catalog-status">catalog loading</div>
+        </div>
+        <div class="mini-grid" id="catalog-summary"></div>
+        <div class="infra-grid" id="catalog-plugins" style="margin-top:12px"></div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>当前整理目录：<span class="mono">D+20260314+goat/micro-mirror</span></span>
+  <span>最终提交入口：<a href="https://julieshi.notion.site/8b33110376804173b6ce1c95ee4a25c6" target="_blank" rel="noreferrer">Submission link</a></span>
+  <div class="spacer"></div>
+  <span>建议本地运行：<span class="mono">cd D+20260314+goat/micro-mirror && python3 -m http.server 8000</span></span>
+</footer>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script type="module">
+  import { Interface, formatUnits, parseUnits } from "https://cdn.jsdelivr.net/npm/ethers@6.13.4/+esm";
+
+  const GOAT_TESTNET3 = {
+    chainId: "0xBEB0",
+    chainName: "GOAT Testnet3",
+    nativeCurrency: { name: "BTC", symbol: "BTC", decimals: 18 },
+    rpcUrls: ["https://rpc.testnet3.goat.network"],
+    blockExplorerUrls: ["https://explorer.testnet3.goat.network"],
+  };
+
+  const RPC_URL = "https://rpc.testnet3.goat.network";
+  const EXPLORER = "https://explorer.testnet3.goat.network";
+  const RECORDS_KEY = "micro-mirror-records-v1";
+  const ORDERS_KEY = "micro-mirror-orders-v1";
+  const PLANS = [
+    {
+      id: "daily",
+      title: "Mirror Daily",
+      price: "19",
+      asset: "USDC",
+      tagline: "仅软件订阅",
+      description: "每日镜像、时间线、双参考报告、每周行动实验。",
+    },
+    {
+      id: "ring",
+      title: "Mirror Ring Beta",
+      price: "199",
+      asset: "USDC",
+      tagline: "智能戒指 + 90 天订阅",
+      description: "增加 HRV、静息心率、夜间恢复等照片外信号。",
+    },
+    {
+      id: "ring-plus",
+      title: "Mirror Ring Plus",
+      price: "349",
+      asset: "USDT",
+      tagline: "戒指 + 季度复盘",
+      description: "适合重度健康管理用户，包含季度复盘和更高频提醒。",
+    },
+  ];
+
+  const ASSETS = [
+    { symbol: "BTC", type: "native", decimals: 18, address: null },
+    { symbol: "USDC", type: "erc20", decimals: 6, address: "0x29d1ee93e9ecf6e50f309f498e40a6b42d352fa1" },
+    { symbol: "USDT", type: "erc20", decimals: 6, address: "0xdce0af57e8f2ce957b3838cd2a2f3f3677965dd3" },
+  ];
+
+  const erc20 = new Interface([
+    "function transfer(address to, uint256 amount) returns (bool)",
+    "function balanceOf(address owner) view returns (uint256)",
+  ]);
+
+  const state = {
+    stream: null,
+    currentImage: null,
+    selectedRecordId: null,
+    records: loadStorage(RECORDS_KEY, seedRecords),
+    orders: loadStorage(ORDERS_KEY, () => []),
+    wallet: { account: null, chainId: null },
+    catalog: null,
+    selectedPlanId: "ring",
+    currentOrder: null,
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  const short = (value) => value ? `${value.slice(0, 8)}...${value.slice(-6)}` : "--";
+  const average = (list) => list.length ? list.reduce((sum, item) => sum + item, 0) / list.length : 0;
+  const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[char]));
+
+  function toast(message) {
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.textContent = message;
+    $("toast-wrap").appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+
+  function loadStorage(key, fallbackFactory) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallbackFactory();
+    } catch {
+      return fallbackFactory();
+    }
+  }
+
+  function saveStorage(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleString("zh-CN", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function placeholderData(label, from, to) {
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${from}"/>
+            <stop offset="100%" stop-color="${to}"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="520" rx="38" fill="url(#g)"/>
+        <ellipse cx="200" cy="205" rx="106" ry="132" fill="rgba(255,250,244,0.7)"/>
+        <rect x="126" y="350" width="148" height="96" rx="48" fill="rgba(255,250,244,0.62)"/>
+        <text x="200" y="470" text-anchor="middle" font-family="Arial" font-size="28" fill="rgba(255,250,244,0.9)">${label}</text>
+      </svg>
+    `;
+    return `data:image/svg+xml;base64,${btoa(svg)}`;
+  }
+
+  function buildAssessment(source, previousRecords) {
+    const prevScores = previousRecords.slice(0, 3).map((item) => item.assessment.score);
+    const prevAverage = prevScores.length ? average(prevScores) : 68;
+    let score =
+      66 +
+      (source.sleepHours - 6.5) * 6 -
+      (source.stressLevel - 5) * 3 +
+      (source.hydrationLevel - 5) * 2 +
+      (source.imageStats.brightness - 50) * 0.14 -
+      (source.imageStats.redness - 50) * 0.08;
+
+    if (source.useRing) {
+      score += source.ringHrv ? (source.ringHrv - 40) * 0.35 : 0;
+      score -= source.restingHeartRate ? Math.max(0, source.restingHeartRate - 68) * 0.45 : 0;
+    }
+
+    score = clamp(Math.round(score), 28, 93);
+
+    let focusTitle = "以节律稳定和轻度恢复为主";
+    let focusBody = "当前趋势没有明显危险信号，更像是需要把睡眠、补水、光照和作息稳定下来。";
+    let tcmBullets = [
+      "参考“五色诊”和面部脏腑分区，当前更像是轻度气机不畅，而不是强烈失衡。",
+      "日常方向以脾胃运化和肝气疏解为主，先做稳定，不追求激进干预。",
+      "建议连续 7 天固定时间拍摄，观察气色和眼周变化是否持续波动。",
+    ];
+    let modernBullets = [
+      "从现代报告视角，这更像恢复储备一般、但尚可通过日常管理改善的状态。",
+      "先盯睡眠时长、晚间屏幕暴露、补水和晨间光照这四个最可控变量。",
+      "如果后续叠加可穿戴 HRV 和静息心率，结论稳定性会明显提高。",
+    ];
+    let actions = [
+      "未来 7 天尽量把拍摄时间固定在早晨洗漱后。",
+      "连续 3 天把睡眠拉回 7 小时以上，再看镜像与体感是否同步改善。",
+      "如果要加补剂或新方案，先只改一个变量，避免混淆原因。",
+    ];
+    let references = ["五色诊", "面部脏腑分区", "sleep recovery", "skin barrier"];
+
+    if (source.stressLevel >= 7 && source.imageStats.redness >= 56) {
+      focusTitle = "优先关注压力热象与恢复透支";
+      focusBody = "时间线里如果持续出现面部偏红、睡眠不足和主观压力高，先把“过热”和“恢复不足”作为保健主轴。";
+      tcmBullets = [
+        "可参照“肝郁化火”与面部偏赤的思路，重点看情绪、熬夜、咖啡酒精是否把热象往上拱。",
+        "这不是中医诊断结论，而是一个体质方向提示：先疏解，再谈进补。",
+        "如果连续几天眼周紧、两颊热感明显，建议把晚间刺激降下来观察变化。",
+      ];
+      modernBullets = [
+        "现代报告式参照更接近“stress load + inflammatory burden”方向。",
+        "如果同步看到 HRV 下降或静息心率抬高，说明恢复系统可能被长期挤压。",
+        "MVP 建议优先做睡眠恢复、晚间刺激管理和训练量回撤，而不是继续叠加高强度消耗。",
+      ];
+      actions = [
+        "把咖啡、酒精和高强度训练尽量移出晚上 6 点后。",
+        "连续 3 晚提前 45 分钟睡，看下一次镜像是否回落。",
+        "如果戒指模式开启，重点观察 HRV 是否回升而不是只看体感。",
+      ];
+      references = ["五色诊", "肝主疏泄", "stress recovery", "HRV", "inflammatory load"];
+    } else if (source.sleepHours <= 5.5 && source.imageStats.brightness <= 45) {
+      focusTitle = "优先关注睡眠恢复与气血支持";
+      focusBody = "当前更像是镜像在提醒你“恢复债”正在累积。先让脸色和精神状态回暖，比继续叠加任务更重要。";
+      tcmBullets = [
+        "可参照“心脾两虚 / 气血不足”方向理解：睡眠不足后，气色和眼周最容易先掉下来。",
+        "中医视角不是说一定有病，而是提示“养”的优先级应排到前面。",
+        "先补节律、补休息、补饮食，不建议一上来用太多刺激型方案。",
+      ];
+      modernBullets = [
+        "现代参照更接近 sleep debt、恢复储备下降和注意力疲劳累积。",
+        "如果日间暴露在高压工作和长时间屏幕，镜像里的暗沉和疲态往往会放大。",
+        "建议把下一周当成“恢复实验周”，观察睡眠和镜像是否同步改善。",
+      ];
+      actions = [
+        "连续 3 晚睡够 7 小时，再拍对比照。",
+        "午后减少额外咖啡因，避免把晚间恢复继续挤掉。",
+        "把早餐蛋白质和补水拉上来，先看气色回升幅度。",
+      ];
+      references = ["心脾两虚", "气血不足", "sleep debt", "recovery reserve"];
+    } else if (source.hydrationLevel <= 4 || source.imageStats.contrast >= 58) {
+      focusTitle = "优先关注津液与皮肤屏障";
+      focusBody = "如果时间线里的纹理感更重、皮肤舒适度下滑，MVP 会把方向偏向“干”和“屏障恢复”。";
+      tcmBullets = [
+        "可参考“阴津偏亏、燥象上浮”的理解，先补津液和休息，再谈更强的干预。",
+        "若嘴唇、鼻翼、眼周都显得干，说明不只是局部护肤问题。",
+        "中医方向上偏向“润”和“养”，不建议继续过度清洁和熬夜。",
+      ];
+      modernBullets = [
+        "现代报告参照更接近 hydration deficit、skin barrier strain 和光损伤累积。",
+        "如果你最近户外暴晒、吹空调、睡眠短，这类状态会更明显。",
+        "这时先把屏障修复、防晒和饮水做到位，比继续刷酸更重要。",
+      ];
+      actions = [
+        "未来 7 天固定防晒和补水节奏。",
+        "减少高刺激护肤步骤，给屏障恢复空间。",
+        "如果镜像纹理感下降，说明方向是对的。",
+      ];
+      references = ["阴津不足", "燥象", "hydration", "skin barrier", "photodamage"];
+    } else if (source.useRing && ((source.ringHrv && source.ringHrv < 32) || (source.restingHeartRate && source.restingHeartRate > 78))) {
+      focusTitle = "优先关注自主神经恢复与长期储备";
+      focusBody = "当镜像和戒指信号一起提示恢复走弱，优先级应上升到“系统恢复”，而不是只修饰表面状态。";
+      tcmBullets = [
+        "可用“肾精与恢复力偏弱”的方向理解：不是立刻下医疗结论，而是提醒你要收一收消耗。",
+        "如果长期晚睡、久坐、高压，这类信号常常会一起出现。",
+        "先做收敛、保温、规律，再去看体力和气色的回升速度。",
+      ];
+      modernBullets = [
+        "现代参照更接近 low HRV、elevated resting HR 和 autonomic recovery debt。",
+        "这类信号在过度训练、慢性压力、睡眠不足时很常见。",
+        "如果连续一周没有反弹，MVP 会建议升级到更完整的长期健康管理服务。",
+      ];
+      actions = [
+        "把运动改成低强度恢复型，优先走路和轻拉伸。",
+        "确保连续 3 天睡眠和晨间光照到位。",
+        "继续记录戒指信号，看 HRV 是否止跌回升。",
+      ];
+      references = ["肾精", "恢复力", "HRV", "resting heart rate", "autonomic balance"];
+    }
+
+    const trend =
+      score >= prevAverage + 4 ? "较最近趋势改善" :
+      score <= prevAverage - 4 ? "较最近趋势走弱" :
+      "与最近趋势接近";
+
+    return {
+      score,
+      focusTitle,
+      focusBody,
+      trend,
+      confidence: source.useRing ? "camera + ring" : "camera + check-in",
+      tcmBullets,
+      modernBullets,
+      actions,
+      references,
+    };
+  }
+
+  function seedRecords() {
+    const drafts = [
+      {
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+        image: placeholderData("day-1", "#8ca593", "#d8b07d"),
+        sleepHours: 6,
+        stressLevel: 7,
+        hydrationLevel: 5,
+        useRing: false,
+        ringHrv: null,
+        restingHeartRate: null,
+        note: "赶工期，昨晚睡得有点短。",
+        imageStats: { brightness: 47, redness: 58, contrast: 52 },
+      },
+      {
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+        image: placeholderData("day-2", "#9ca87f", "#cf9366"),
+        sleepHours: 5.5,
+        stressLevel: 8,
+        hydrationLevel: 4,
+        useRing: true,
+        ringHrv: 34,
+        restingHeartRate: 74,
+        note: "晚上开会到很晚，恢复感明显下降。",
+        imageStats: { brightness: 43, redness: 60, contrast: 57 },
+      },
+      {
+        createdAt: new Date().toISOString(),
+        image: placeholderData("day-3", "#7f998d", "#c7b284"),
+        sleepHours: 7,
+        stressLevel: 5,
+        hydrationLevel: 6,
+        useRing: true,
+        ringHrv: 46,
+        restingHeartRate: 66,
+        note: "今天状态回暖一些，想继续盯趋势。",
+        imageStats: { brightness: 54, redness: 48, contrast: 46 },
+      },
+    ];
+
+    const output = [];
+    for (const draft of drafts) {
+      output.unshift(makeRecord(draft, output));
+    }
+    return output;
+  }
+
+  function makeRecord(source, existingRecords) {
+    const assessment = buildAssessment(source, existingRecords);
+    return {
+      id: `record_${Date.now()}_${Math.random().toString(16).slice(2, 7)}`,
+      ...source,
+      assessment,
+    };
+  }
+
+  function computeImageStats(canvas) {
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    const { width, height } = canvas;
+    const sample = context.getImageData(0, 0, width, height).data;
+    let luminance = 0;
+    let redness = 0;
+    let contrastAccumulator = 0;
+    const pixels = sample.length / 4;
+
+    for (let i = 0; i < sample.length; i += 4) {
+      const r = sample[i];
+      const g = sample[i + 1];
+      const b = sample[i + 2];
+      const l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      luminance += l;
+      redness += r - (g + b) / 2;
+      contrastAccumulator += Math.abs(r - g) + Math.abs(g - b);
+    }
+
+    return {
+      brightness: clamp(Math.round((luminance / pixels) / 255 * 100), 0, 100),
+      redness: clamp(Math.round(((redness / pixels) + 90) / 180 * 100), 0, 100),
+      contrast: clamp(Math.round((contrastAccumulator / pixels) / 255 * 40), 0, 100),
+    };
+  }
+
+  async function startCamera() {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      toast("当前环境不支持摄像头，请改用图片上传。");
+      return;
+    }
+
+    stopCamera();
+    state.stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 960 } },
+      audio: false,
+    });
+    $("camera-feed").srcObject = state.stream;
+    $("camera-feed").style.display = "block";
+    $("capture-canvas").style.display = "none";
+    $("preview-empty").style.display = "none";
+    $("capture-mode").textContent = "camera live";
+  }
+
+  function stopCamera() {
+    if (state.stream) {
+      state.stream.getTracks().forEach((track) => track.stop());
+      state.stream = null;
+    }
+    $("camera-feed").srcObject = null;
+    $("capture-mode").textContent = "camera offline";
+  }
+
+  function showCanvasPreview(dataUrl) {
+    const canvas = $("capture-canvas");
+    const image = new Image();
+    image.onload = () => {
+      const context = canvas.getContext("2d");
+      const ratio = image.width / image.height;
+      const targetWidth = canvas.width;
+      const targetHeight = canvas.height;
+      context.clearRect(0, 0, targetWidth, targetHeight);
+      let drawWidth = targetWidth;
+      let drawHeight = targetHeight;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      if (ratio > targetWidth / targetHeight) {
+        drawWidth = targetHeight * ratio;
+        offsetX = (targetWidth - drawWidth) / 2;
+      } else {
+        drawHeight = targetWidth / ratio;
+        offsetY = (targetHeight - drawHeight) / 2;
+      }
+
+      context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+      $("camera-feed").style.display = "none";
+      canvas.style.display = "block";
+      $("preview-empty").style.display = "none";
+      state.currentImage = canvas.toDataURL("image/jpeg", 0.92);
+    };
+    image.src = dataUrl;
+  }
+
+  function capturePhoto() {
+    const video = $("camera-feed");
+    const canvas = $("capture-canvas");
+    const context = canvas.getContext("2d");
+
+    if (video.srcObject) {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      $("camera-feed").style.display = "none";
+      canvas.style.display = "block";
+      state.currentImage = canvas.toDataURL("image/jpeg", 0.92);
+      $("preview-empty").style.display = "none";
+      toast("今日镜像已截取，可以直接保存。");
+      return;
+    }
+
+    if (state.currentImage) {
+      toast("当前已有待保存镜像。");
+      return;
+    }
+
+    toast("请先启动摄像头或上传图片。");
+  }
+
+  function bindRanges() {
+    [
+      ["sleep-hours", "sleep-hours-value", (value) => `${Number(value).toFixed(1)}h`],
+      ["stress-level", "stress-level-value", (value) => `${value}/10`],
+      ["hydration-level", "hydration-level-value", (value) => `${value}/10`],
+    ].forEach(([inputId, outputId, formatter]) => {
+      const input = $(inputId);
+      const output = $(outputId);
+      const update = () => {
+        output.textContent = formatter(input.value);
+      };
+      input.addEventListener("input", update);
+      update();
+    });
+  }
+
+  function currentPlan() {
+    return PLANS.find((item) => item.id === state.selectedPlanId) || PLANS[1];
+  }
+
+  function renderPlans() {
+    $("plan-grid").innerHTML = PLANS.map((plan) => `
+      <article class="plan ${plan.id === state.selectedPlanId ? "active" : ""}" data-plan-id="${plan.id}">
+        <strong>${escapeHtml(plan.title)} · ${escapeHtml(plan.price)} ${escapeHtml(plan.asset)}</strong>
+        <p>${escapeHtml(plan.tagline)}</p>
+        <p>${escapeHtml(plan.description)}</p>
+      </article>
+    `).join("");
+    $("hero-plan").textContent = currentPlan().price;
+  }
+
+  function renderAssetOptions() {
+    $("pay-asset").innerHTML = ASSETS.map((asset) => `
+      <option value="${asset.symbol}" ${asset.symbol === currentPlan().asset ? "selected" : ""}>${asset.symbol}</option>
+    `).join("");
+  }
+
+  function updateRingInputs() {
+    const enabled = $("ring-enabled").checked;
+    $("ring-hrv").disabled = !enabled;
+    $("resting-hr").disabled = !enabled;
+  }
+
+  function saveRecordFromCurrentImage() {
+    if (!state.currentImage) {
+      toast("先拍照或上传一张今日镜像。");
+      return;
+    }
+    const canvas = $("capture-canvas");
+    const record = makeRecord({
+      createdAt: new Date().toISOString(),
+      image: state.currentImage,
+      sleepHours: Number($("sleep-hours").value),
+      stressLevel: Number($("stress-level").value),
+      hydrationLevel: Number($("hydration-level").value),
+      useRing: $("ring-enabled").checked,
+      ringHrv: $("ring-enabled").checked ? Number($("ring-hrv").value || 0) : null,
+      restingHeartRate: $("ring-enabled").checked ? Number($("resting-hr").value || 0) : null,
+      note: $("entry-note").value.trim(),
+      imageStats: computeImageStats(canvas),
+    }, state.records);
+
+    state.records = [record, ...state.records].slice(0, 12);
+    state.selectedRecordId = record.id;
+    saveStorage(RECORDS_KEY, state.records);
+    renderRecords();
+    renderSelectedRecord();
+    renderHero();
+    toast("今日镜像已进入时间线。");
+  }
+
+  function renderRecords() {
+    $("timeline-count").textContent = `${state.records.length} records`;
+    if (!state.selectedRecordId && state.records[0]) {
+      state.selectedRecordId = state.records[0].id;
+    }
+
+    $("timeline-list").innerHTML = state.records.map((record) => `
+      <article class="timeline-item ${record.id === state.selectedRecordId ? "active" : ""}" data-record-id="${record.id}">
+        <div class="thumb"><img src="${record.image}" alt="mirror record"></div>
+        <div>
+          <div class="timeline-title">${escapeHtml(record.assessment.focusTitle)}</div>
+          <div class="timeline-meta">${escapeHtml(formatDate(record.createdAt))} · ${escapeHtml(record.assessment.confidence)}</div>
+          <div class="timeline-note">${escapeHtml(record.note || "无备注")}</div>
+        </div>
+        <div class="score-tag">
+          <strong>${record.assessment.score}</strong>
+          <span>${escapeHtml(record.assessment.trend)}</span>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function selectedRecord() {
+    return state.records.find((item) => item.id === state.selectedRecordId) || state.records[0] || null;
+  }
+
+  function renderSelectedRecord() {
+    const record = selectedRecord();
+    if (!record) {
+      return;
+    }
+
+    $("report-status").textContent = record.assessment.confidence;
+    $("report-photo").src = record.image;
+    $("report-date").textContent = `${formatDate(record.createdAt)} · ${record.assessment.trend}`;
+    $("report-focus-title").textContent = record.assessment.focusTitle;
+    $("report-focus-body").textContent = record.assessment.focusBody;
+    $("report-chips").innerHTML = [
+      `恢复指数 ${record.assessment.score}`,
+      record.useRing ? "已接入戒指" : "仅相机模式",
+      `睡眠 ${record.sleepHours}h`,
+      `压力 ${record.stressLevel}/10`,
+    ].map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("");
+
+    $("report-tcm").innerHTML = record.assessment.tcmBullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+    $("report-modern").innerHTML = record.assessment.modernBullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+    $("report-actions").innerHTML = record.assessment.actions.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  }
+
+  function consecutiveDays(records) {
+    const days = [...new Set(records.map((item) => new Date(item.createdAt).toDateString()))];
+    return days.length;
+  }
+
+  function renderHero() {
+    const record = selectedRecord();
+    if (!record) return;
+    $("hero-score").textContent = record.assessment.score;
+    $("hero-focus").textContent = record.assessment.focusTitle;
+    $("hero-streak").textContent = consecutiveDays(state.records);
+    $("hero-confidence").textContent = `当前模式：${record.assessment.confidence}`;
+    $("hero-track").textContent = record.useRing ? "camera+ring" : "camera";
+    $("hero-trend").textContent = record.assessment.trend;
+  }
+
+  async function rpc(method, params = []) {
+    const response = await fetch(RPC_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    });
+    const payload = await response.json();
+    if (payload.error) {
+      throw new Error(payload.error.message || "RPC error");
+    }
+    return payload.result;
+  }
+
+  async function switchToGoat() {
+    if (!window.ethereum) throw new Error("MetaMask not found");
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: GOAT_TESTNET3.chainId }],
+      });
+    } catch (error) {
+      if (error.code === 4902) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [GOAT_TESTNET3],
+        });
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  async function connectWallet() {
+    if (!window.ethereum) {
+      toast("当前浏览器没有 MetaMask。");
+      return;
+    }
+    await switchToGoat();
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    state.wallet.account = accounts[0] || null;
+    state.wallet.chainId = await window.ethereum.request({ method: "eth_chainId" });
+    $("wallet-address").textContent = state.wallet.account ? short(state.wallet.account) : "wallet disconnected";
+    $("wallet-network").textContent = state.wallet.chainId === GOAT_TESTNET3.chainId ? "GOAT Testnet3" : state.wallet.chainId;
+    if (!$("treasury-address").value && state.wallet.account) {
+      $("treasury-address").value = state.wallet.account;
+    }
+    await refreshBalances();
+    toast("钱包已连接。");
+  }
+
+  async function refreshBalances() {
+    if (!state.wallet.account) return;
+    const asset = ASSETS.find((item) => item.symbol === $("pay-asset").value) || ASSETS[1];
+    const nativeRaw = await rpc("eth_getBalance", [state.wallet.account, "latest"]);
+    let text = `${Number(formatUnits(nativeRaw, 18)).toFixed(4)} BTC`;
+
+    if (asset.type === "erc20" && asset.address) {
+      const call = erc20.encodeFunctionData("balanceOf", [state.wallet.account]);
+      const raw = await rpc("eth_call", [{ to: asset.address, data: call }, "latest"]);
+      const [balance] = erc20.decodeFunctionResult("balanceOf", raw);
+      text += ` · ${Number(formatUnits(balance, asset.decimals)).toFixed(2)} ${asset.symbol}`;
+    }
+
+    $("wallet-balance").textContent = text;
+  }
+
+  function buildOrder() {
+    const plan = currentPlan();
+    const treasury = $("treasury-address").value.trim();
+    if (!state.wallet.account) throw new Error("先连接钱包。");
+    if (!/^0x[a-fA-F0-9]{40}$/.test(treasury)) throw new Error("项目收款钱包地址不合法。");
+
+    return {
+      orderId: `mm_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`,
+      status: "created",
+      createdAt: new Date().toISOString(),
+      planId: plan.id,
+      planTitle: plan.title,
+      assetSymbol: $("pay-asset").value,
+      amount: plan.price,
+      treasury,
+      payer: state.wallet.account,
+      shippingCity: $("shipping-city").value.trim() || "Shenzhen",
+      ringSize: $("ring-size").value,
+      note: $("order-note").value.trim(),
+    };
+  }
+
+  function setCurrentOrder(order) {
+    state.currentOrder = order;
+    $("order-badge").textContent = `checkout ${order.status}`;
+    $("order-json").textContent = JSON.stringify(order, null, 2);
+  }
+
+  function upsertOrder(order) {
+    state.orders = [order, ...state.orders.filter((item) => item.orderId !== order.orderId)].slice(0, 8);
+    saveStorage(ORDERS_KEY, state.orders);
+    renderOrders();
+  }
+
+  function createOrder() {
+    try {
+      const order = buildOrder();
+      setCurrentOrder(order);
+      upsertOrder(order);
+      toast(`预购单 ${order.orderId} 已创建。`);
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
+  async function signOrder() {
+    try {
+      if (!state.currentOrder) throw new Error("先创建预购单。");
+      if (!window.ethereum) throw new Error("MetaMask not found");
+      await switchToGoat();
+
+      const typedData = {
+        domain: {
+          name: "MicroMirrorOrder",
+          version: "1",
+          chainId: 48816,
+          verifyingContract: state.currentOrder.treasury,
+        },
+        primaryType: "OrderIntent",
+        types: {
+          EIP712Domain: [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "uint256" },
+            { name: "verifyingContract", type: "address" },
+          ],
+          OrderIntent: [
+            { name: "orderId", type: "string" },
+            { name: "plan", type: "string" },
+            { name: "asset", type: "string" },
+            { name: "amount", type: "string" },
+            { name: "city", type: "string" },
+          ],
+        },
+        message: {
+          orderId: state.currentOrder.orderId,
+          plan: state.currentOrder.planTitle,
+          asset: state.currentOrder.assetSymbol,
+          amount: state.currentOrder.amount,
+          city: state.currentOrder.shippingCity,
+        },
+      };
+
+      const signature = await window.ethereum.request({
+        method: "eth_signTypedData_v4",
+        params: [state.wallet.account, JSON.stringify(typedData)],
+      });
+
+      const next = {
+        ...state.currentOrder,
+        status: "authorized",
+        signature,
+        typedData,
+      };
+      setCurrentOrder(next);
+      upsertOrder(next);
+      toast("订单授权签名完成。");
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
+  function selectedAsset() {
+    return ASSETS.find((item) => item.symbol === $("pay-asset").value) || ASSETS[1];
+  }
+
+  function toHex(bigintValue) {
+    return `0x${bigintValue.toString(16)}`;
+  }
+
+  async function sendPayment() {
+    try {
+      if (!state.currentOrder) throw new Error("先创建预购单。");
+      if (!state.currentOrder.signature) throw new Error("先做订单授权签名。");
+      if (!window.ethereum) throw new Error("MetaMask not found");
+      await switchToGoat();
+      const asset = selectedAsset();
+
+      const txRequest = asset.type === "native"
+        ? {
+            from: state.wallet.account,
+            to: state.currentOrder.treasury,
+            value: toHex(parseUnits(state.currentOrder.amount, asset.decimals)),
+          }
+        : {
+            from: state.wallet.account,
+            to: asset.address,
+            value: "0x0",
+            data: erc20.encodeFunctionData("transfer", [
+              state.currentOrder.treasury,
+              parseUnits(state.currentOrder.amount, asset.decimals),
+            ]),
+          };
+
+      const txHash = await window.ethereum.request({
+        method: "eth_sendTransaction",
+        params: [txRequest],
+      });
+
+      const next = {
+        ...state.currentOrder,
+        status: "submitted",
+        txHash,
+        explorerUrl: `${EXPLORER}/tx/${txHash}`,
+      };
+      setCurrentOrder(next);
+      upsertOrder(next);
+      toast(`支付已提交：${short(txHash)}`);
+      await refreshOrderStatus();
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
+  async function refreshOrderStatus() {
+    if (!state.currentOrder?.txHash) {
+      toast("当前订单还没有链上交易哈希。");
+      return;
+    }
+
+    const receipt = await rpc("eth_getTransactionReceipt", [state.currentOrder.txHash]);
+    const next = { ...state.currentOrder };
+
+    if (!receipt) {
+      next.status = "pending";
+    } else if (receipt.status === "0x1") {
+      next.status = "confirmed";
+      next.blockNumber = parseInt(receipt.blockNumber, 16);
+    } else {
+      next.status = "failed";
+    }
+
+    setCurrentOrder(next);
+    upsertOrder(next);
+    await refreshBalances();
+  }
+
+  function renderOrders() {
+    if (!state.orders.length) {
+      $("order-list").innerHTML = `<div class="helper">还没有订单，创建一单就会留在这里。</div>`;
+      return;
+    }
+
+    $("order-list").innerHTML = state.orders.map((order) => `
+      <article class="order-item">
+        <div class="order-head">
+          <strong>${escapeHtml(order.planTitle)} · ${escapeHtml(order.amount)} ${escapeHtml(order.assetSymbol)}</strong>
+          <span class="status-pill ${escapeHtml(order.status)}">${escapeHtml(order.status)}</span>
+        </div>
+        <div class="helper">${escapeHtml(order.orderId)} · ${escapeHtml(formatDate(order.createdAt))}</div>
+        <div class="helper">${escapeHtml(short(order.payer))} → ${escapeHtml(short(order.treasury))}</div>
+        <div class="helper">${escapeHtml(order.shippingCity)} · ring ${escapeHtml(order.ringSize)}</div>
+      </article>
+    `).join("");
+  }
+
+  async function loadCatalog() {
+    try {
+      const response = await fetch("./generated/agentkit-catalog.json");
+      state.catalog = await response.json();
+      $("catalog-status").textContent = "catalog ready";
+      renderCatalog();
+    } catch (error) {
+      $("catalog-status").textContent = "catalog missing";
+      $("catalog-summary").innerHTML = `<div class="helper">无法读取 AgentKit catalog：${escapeHtml(error.message)}</div>`;
+    }
+  }
+
+  function renderCatalog() {
+    if (!state.catalog?.summary) return;
+    const summary = state.catalog.summary;
+    $("catalog-summary").innerHTML = [
+      { label: "actions", value: summary.actionCount, note: "本地 agentkit 扫描结果" },
+      { label: "plugins", value: summary.pluginCount, note: "覆盖支付、商户、身份、钱包等模块" },
+      { label: "merchant ops", value: summary.merchantActionCount, note: "x402 merchant 侧动作数量" },
+    ].map((item) => `
+      <div class="mini-card">
+        <strong>${item.value}</strong>
+        <span>${escapeHtml(item.label)}</span>
+        <span>${escapeHtml(item.note)}</span>
+      </div>
+    `).join("");
+
+    const pluginCards = state.catalog.plugins
+      .filter((plugin) => ["x402", "x402-merchant", "erc8004", "wallet"].includes(plugin.id))
+      .map((plugin) => `
+        <div class="infra-card">
+          <strong>${escapeHtml(plugin.id)} · ${plugin.actionCount}</strong>
+          <p>${escapeHtml(plugin.actions.slice(0, 3).map((item) => item.name).join(" · "))}</p>
+          <small>适合 judge 提问时解释支付、身份和订单能力。</small>
+        </div>
+      `).join("");
+
+    $("catalog-plugins").innerHTML = pluginCards;
+  }
+
+  function bindTimelineClicks() {
+    $("timeline-list").addEventListener("click", (event) => {
+      const target = event.target.closest("[data-record-id]");
+      if (!target) return;
+      state.selectedRecordId = target.getAttribute("data-record-id");
+      renderRecords();
+      renderSelectedRecord();
+      renderHero();
+    });
+  }
+
+  function bindPlanClicks() {
+    $("plan-grid").addEventListener("click", (event) => {
+      const target = event.target.closest("[data-plan-id]");
+      if (!target) return;
+      state.selectedPlanId = target.getAttribute("data-plan-id");
+      renderPlans();
+      renderAssetOptions();
+    });
+  }
+
+  function bindEvents() {
+    $("start-camera").addEventListener("click", () => startCamera().catch((error) => toast(error.message)));
+    $("stop-camera").addEventListener("click", stopCamera);
+    $("capture-photo").addEventListener("click", capturePhoto);
+    $("upload-trigger").addEventListener("click", () => $("upload-photo").click());
+    $("upload-photo").addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        showCanvasPreview(reader.result);
+        $("capture-mode").textContent = "image uploaded";
+        toast("已载入上传图片。");
+      };
+      reader.readAsDataURL(file);
+    });
+    $("ring-enabled").addEventListener("change", updateRingInputs);
+    $("hero-start-camera").addEventListener("click", () => startCamera().catch((error) => toast(error.message)));
+    $("hero-capture").addEventListener("click", saveRecordFromCurrentImage);
+    $("scroll-order").addEventListener("click", () => $("order-section").scrollIntoView({ behavior: "smooth", block: "start" }));
+    $("connect-wallet").addEventListener("click", () => connectWallet().catch((error) => toast(error.message)));
+    $("use-self-wallet").addEventListener("click", () => {
+      if (!state.wallet.account) {
+        toast("先连接钱包。");
+        return;
+      }
+      $("treasury-address").value = state.wallet.account;
+      toast("已把当前钱包填成收款钱包，方便自演示。");
+    });
+    $("create-order").addEventListener("click", createOrder);
+    $("sign-order").addEventListener("click", () => signOrder().catch((error) => toast(error.message)));
+    $("send-payment").addEventListener("click", () => sendPayment().catch((error) => toast(error.message)));
+    $("refresh-order").addEventListener("click", () => refreshOrderStatus().catch((error) => toast(error.message)));
+    $("pay-asset").addEventListener("change", () => refreshBalances().catch(() => {}));
+
+    bindTimelineClicks();
+    bindPlanClicks();
+    bindRanges();
+  }
+
+  function initialRender() {
+    renderPlans();
+    renderAssetOptions();
+    updateRingInputs();
+    renderRecords();
+    renderSelectedRecord();
+    renderHero();
+    renderOrders();
+  }
+
+  if (window.ethereum) {
+    window.ethereum.on("accountsChanged", (accounts) => {
+      state.wallet.account = accounts[0] || null;
+      $("wallet-address").textContent = state.wallet.account ? short(state.wallet.account) : "wallet disconnected";
+      refreshBalances().catch(() => {});
+    });
+    window.ethereum.on("chainChanged", (chainId) => {
+      state.wallet.chainId = chainId;
+      $("wallet-network").textContent = chainId === GOAT_TESTNET3.chainId ? "GOAT Testnet3" : chainId;
+    });
+  }
+
+  bindEvents();
+  initialRender();
+  loadCatalog();
+</script>
+</body>
+</html>

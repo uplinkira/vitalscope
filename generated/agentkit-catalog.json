@@ -1,0 +1,2338 @@
+{
+  "generatedAt": "2026-03-14T08:26:45.798Z",
+  "sourceRoot": "../agentkit",
+  "summary": {
+    "pluginCount": 13,
+    "actionCount": 95,
+    "adapterCount": 5,
+    "paymentActionCount": 5,
+    "merchantActionCount": 30,
+    "identityActionCount": 9,
+    "walletActionCount": 10
+  },
+  "foundations": [
+    {
+      "id": "runtime",
+      "label": "Execution Runtime",
+      "description": "Policy, validation, retry, timeout, hooks, metrics.",
+      "file": "core/runtime/execution-runtime.ts"
+    },
+    {
+      "id": "policy",
+      "label": "Policy Engine",
+      "description": "Risk gating and confirmation control.",
+      "file": "core/policy/policy-engine.ts"
+    },
+    {
+      "id": "provider",
+      "label": "Action Provider",
+      "description": "Action registry plus tool manifest export.",
+      "file": "providers/action-provider.ts"
+    },
+    {
+      "id": "tokens",
+      "label": "GOAT Token Registry",
+      "description": "Symbol-to-address resolution for GOAT chain assets.",
+      "file": "networks/goat/tokens.ts"
+    }
+  ],
+  "plugins": [
+    {
+      "id": "x402-merchant",
+      "label": "x402 merchant",
+      "actionCount": 30,
+      "actions": [
+        {
+          "name": "goat.x402.merchant.addresses.add",
+          "description": "Add a receiving address for a chain+token pair (owner only)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/addresses.add.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.addresses.list",
+          "description": "List x402 merchant receiving addresses",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/addresses.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.addresses.remove",
+          "description": "Remove a receiving address by chain and token symbol (owner only)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/addresses.remove.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.api-keys.get",
+          "description": "View API key info (secret is masked)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/api-keys.get.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.api-keys.rotate",
+          "description": "Rotate API keys (invalidates current keys immediately, owner only). Save the new api_secret from response!",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/api-keys.rotate.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.audit-logs.list",
+          "description": "Get merchant audit logs (profile, address, webhook, key rotation events)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/audit-logs.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.auth.login",
+          "description": "Login to x402 merchant portal and obtain access/refresh tokens. Use the returned access_token in subsequent action calls.",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/auth.login.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.auth.refresh",
+          "description": "Refresh x402 merchant portal access token using a refresh token. Use the returned access_token in subsequent action calls.",
+          "riskLevel": "low",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/auth.refresh.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.auth.register-invite",
+          "description": "Register on x402 merchant portal using an invite code (auto-approved). Use the returned access_token in subsequent action calls.",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/auth.register-invite.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.auth.register",
+          "description": "Register a new merchant on the x402 merchant portal (pending admin approval)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/auth.register.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.balance.fees-config",
+          "description": "Get x402 merchant fee configuration per chain",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/balance.fees-config.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.balance.get",
+          "description": "Get x402 merchant fee balance",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/balance.get.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.balance.transactions",
+          "description": "Get x402 merchant balance transactions (paginated)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/balance.transactions.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.callback-contracts.cancel-submission",
+          "description": "Cancel a pending callback contract submission (owner only)",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/callback-contracts.cancel-submission.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.callback-contracts.list",
+          "description": "List callback contracts (active + pending/rejected submissions, DELEGATE mode)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/callback-contracts.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.callback-contracts.remove",
+          "description": "Remove an active callback contract (owner only, blocked if in-flight orders exist)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/callback-contracts.remove.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.callback-contracts.submit",
+          "description": "Submit a callback contract for admin review (owner only, DELEGATE mode)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/callback-contracts.submit.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.dashboard.stats",
+          "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/dashboard.stats.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.invite-codes.create",
+          "description": "Create a single-use invite code for a new member (owner only)",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/invite-codes.create.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.invite-codes.list",
+          "description": "List merchant invite codes (owner only)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/invite-codes.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.invite-codes.revoke",
+          "description": "Revoke an unused invite code (owner only)",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/invite-codes.revoke.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.orders.get",
+          "description": "Get x402 merchant order details (includes payment and payout info)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/orders.get.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.orders.list",
+          "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/orders.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.profile.get",
+          "description": "Get x402 merchant profile information",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/profile.get.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.profile.update",
+          "description": "Update x402 merchant profile (name and logo only, owner only)",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/profile.update.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.supported-tokens.list",
+          "description": "List system-supported chains and tokens (chain_id, symbol, decimals, explorer)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/supported-tokens.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.webhooks.create",
+          "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/webhooks.create.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.webhooks.delete",
+          "description": "Delete a webhook endpoint (owner only)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/webhooks.delete.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.webhooks.list",
+          "description": "List x402 merchant webhooks",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/webhooks.list.ts",
+          "plugin": "x402-merchant"
+        },
+        {
+          "name": "goat.x402.merchant.webhooks.update",
+          "description": "Update a webhook (toggle enabled, change URL or events, owner only)",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402-merchant/actions/webhooks.update.ts",
+          "plugin": "x402-merchant"
+        }
+      ]
+    },
+    {
+      "id": "bitvm2",
+      "label": "bitvm2",
+      "actionCount": 10,
+      "actions": [
+        {
+          "name": "goat.bitvm2.bridge.deposit",
+          "description": "Start BTC L1 -> Goat L2 deposit via BitVM2 bridge",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/bridge.deposit.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.bridge.status",
+          "description": "Track BitVM2 bridge request status",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/bridge.status.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.bridge.withdraw",
+          "description": "Start Goat L2 -> BTC L1 withdraw via BitVM2 bridge",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/bridge.withdraw.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.pegbtc.balance",
+          "description": "Get PegBTC token balance for an address. PegBTC is the BitVM2 bridge token on Goat Network.",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/pegbtc.balance.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.pegin.request",
+          "description": "Request a peg-in (BTC L1 → Goat L2) via the BitVM2 bridge. Submits a peg-in request to GoatChain. After requesting, the user must deposit BTC on L1 to the generated address. Minimum deposit: 50,000 sats. Operator graph prepayment: ~10,000 sats.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/pegin.request.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.pegout.initiate",
+          "description": "Initiate a peg-out (Goat L2 → BTC L1) via the BitVM2 bridge Gateway.initWithdraw. Requires a running Operator node. The operator will process the withdrawal and send BTC on L1.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/pegout.initiate.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.stake.approve",
+          "description": "Approve PegBTC tokens for the BitVM2 StakeManagement contract. This is the second step in the staking flow (after registerPubkey). The amount must be >= the amount you intend to stake.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/stake.approve.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.stake.lock",
+          "description": "Lock staked PegBTC in the BitVM2 StakeManagement contract. This is the fourth and final step in the staking flow. Minimum lock amount is 0.06 PBTC (60000000000000000 wei). Each disprove slash costs 0.03 PBTC. The locked amount must be <= staked amount.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/stake.lock.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.stake.register_pubkey",
+          "description": "Register an x-only public key (32 bytes) with the BitVM2 StakeManagement contract. This is the first step in the staking flow. X-only pubkeys are derived by removing the leading 02/03 prefix from a compressed 33-byte public key.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/stake.register-pubkey.ts",
+          "plugin": "bitvm2"
+        },
+        {
+          "name": "goat.bitvm2.stake.stake",
+          "description": "Stake PegBTC tokens with the BitVM2 StakeManagement contract. This is the third step in the staking flow (after approve). The amount must be <= previously approved amount.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitvm2/actions/stake.stake.ts",
+          "plugin": "bitvm2"
+        }
+      ]
+    },
+    {
+      "id": "wallet",
+      "label": "wallet",
+      "actionCount": 10,
+      "actions": [
+        {
+          "name": "wallet.approve_erc20",
+          "description": "Approve ERC20 token spending allowance for a spender address",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/approve-erc20.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.balance",
+          "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/balance.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.contract_read",
+          "description": "Read data from a smart contract (view/pure function call)",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/contract-read.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.contract_write",
+          "description": "Write to a smart contract (state-changing function call)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/contract-write.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.deploy_contract",
+          "description": "Deploy a smart contract on-chain given its ABI and bytecode",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/deploy-contract.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.get_allowance",
+          "description": "Query ERC20 token allowance for a given owner and spender",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/get-allowance.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.get_details",
+          "description": "Get wallet details including address, network, and native balance",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/get-details.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.resolve_token",
+          "description": "Resolve a token symbol to its on-chain contract address",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/resolve-token.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.transfer_erc20",
+          "description": "Transfer ERC20 tokens to an address",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/transfer-erc20.ts",
+          "plugin": "wallet"
+        },
+        {
+          "name": "wallet.transfer_native",
+          "description": "Transfer native token (e.g. ETH/BTC) to an address",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wallet/actions/transfer-native.ts",
+          "plugin": "wallet"
+        }
+      ]
+    },
+    {
+      "id": "erc8004",
+      "label": "erc8004",
+      "actionCount": 9,
+      "actions": [
+        {
+          "name": "erc8004.get_agent_wallet",
+          "description": "Get the linked wallet address for an agent from the ERC-8004 Identity Registry",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/get-agent-wallet.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.get_clients",
+          "description": "Get the list of client addresses that have submitted feedback for an agent in the ERC-8004 Reputation Registry",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/get-clients.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.get_metadata",
+          "description": "Read a metadata entry for an agent from the ERC-8004 Identity Registry",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/get-metadata.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.get_reputation",
+          "description": "Get the reputation summary for an agent from the ERC-8004 Reputation Registry. Filter by client addresses and tags. Pass empty arrays/strings for no filter.",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/get-reputation.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.give_feedback",
+          "description": "Submit feedback for an agent in the ERC-8004 Reputation Registry. Value is a signed integer with decimals (e.g. value=87, decimals=0 for a score of 87; value=9977, decimals=2 for 99.77%).",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/give-feedback.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.register_agent",
+          "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent.",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/register-agent.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.revoke_feedback",
+          "description": "Revoke previously submitted feedback for an agent in the ERC-8004 Reputation Registry. Only the original feedback submitter can revoke.",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/revoke-feedback.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.set_agent_uri",
+          "description": "Update the registration URI for an agent in the ERC-8004 Identity Registry. Only the agent owner can call this.",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/set-agent-uri.ts",
+          "plugin": "erc8004"
+        },
+        {
+          "name": "erc8004.set_metadata",
+          "description": "Set a metadata entry for an agent in the ERC-8004 Identity Registry. Only the agent owner can call this.",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc8004/actions/set-metadata.ts",
+          "plugin": "erc8004"
+        }
+      ]
+    },
+    {
+      "id": "bridge",
+      "label": "bridge",
+      "actionCount": 7,
+      "actions": [
+        {
+          "name": "bridge.cancel",
+          "description": "Cancel a pending Bridge withdrawal by its ID",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bridge/actions/cancel.ts",
+          "plugin": "bridge"
+        },
+        {
+          "name": "bridge.deposit_status",
+          "description": "Check whether a Bitcoin deposit has been credited on Goat Network",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bridge/actions/deposit-status.ts",
+          "plugin": "bridge"
+        },
+        {
+          "name": "bridge.get_params",
+          "description": "Get the current deposit and withdrawal parameters from the Bridge contract",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bridge/actions/get-params.ts",
+          "plugin": "bridge"
+        },
+        {
+          "name": "bridge.refund",
+          "description": "Refund a cancelled Bridge withdrawal by its ID",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bridge/actions/refund.ts",
+          "plugin": "bridge"
+        },
+        {
+          "name": "bridge.replace_by_fee",
+          "description": "Replace a pending Bridge withdrawal with a higher Bitcoin transaction fee",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bridge/actions/replace-by-fee.ts",
+          "plugin": "bridge"
+        },
+        {
+          "name": "bridge.withdraw",
+          "description": "Withdraw BTC from Goat Network to a Bitcoin address via the Bridge contract",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bridge/actions/withdraw.ts",
+          "plugin": "bridge"
+        },
+        {
+          "name": "bridge.withdrawal_status",
+          "description": "Query the status of a Bridge withdrawal by its ID",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bridge/actions/withdrawal-status.ts",
+          "plugin": "bridge"
+        }
+      ]
+    },
+    {
+      "id": "dex",
+      "label": "dex",
+      "actionCount": 7,
+      "actions": [
+        {
+          "name": "dex.add_liquidity",
+          "description": "Add liquidity to a Uniswap V3 pool on Goat Network via OKU PositionManager",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/dex/actions/add-liquidity.ts",
+          "plugin": "dex"
+        },
+        {
+          "name": "dex.collect_fees",
+          "description": "Collect accumulated fees from a Uniswap V3 position on Goat Network via OKU PositionManager",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/dex/actions/collect-fees.ts",
+          "plugin": "dex"
+        },
+        {
+          "name": "dex.get_pool",
+          "description": "Look up a Uniswap V3 pool address on Goat Network via OKU V3Factory",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/dex/actions/get-pool.ts",
+          "plugin": "dex"
+        },
+        {
+          "name": "dex.get_position",
+          "description": "Get details of a Uniswap V3 liquidity position on Goat Network via OKU PositionManager",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/dex/actions/get-position.ts",
+          "plugin": "dex"
+        },
+        {
+          "name": "dex.quote",
+          "description": "Get a price quote for a Uniswap V3 swap on Goat Network via OKU QuoterV2",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/dex/actions/quote.ts",
+          "plugin": "dex"
+        },
+        {
+          "name": "dex.remove_liquidity",
+          "description": "Remove liquidity from a Uniswap V3 position on Goat Network via OKU PositionManager",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/dex/actions/remove-liquidity.ts",
+          "plugin": "dex"
+        },
+        {
+          "name": "dex.swap",
+          "description": "Execute a Uniswap V3 exact-input single swap on Goat Network via OKU SwapRouter02",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/dex/actions/swap.ts",
+          "plugin": "dex"
+        }
+      ]
+    },
+    {
+      "id": "x402",
+      "label": "x402",
+      "actionCount": 5,
+      "actions": [
+        {
+          "name": "goat.x402.payment.cancel",
+          "description": "Cancel x402 payment via merchant gateway API",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.cancel.ts",
+          "plugin": "x402"
+        },
+        {
+          "name": "goat.x402.payment.create",
+          "description": "Create x402 payment intent via merchant gateway API",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.create.ts",
+          "plugin": "x402"
+        },
+        {
+          "name": "goat.x402.payment.status",
+          "description": "Get x402 payment status via merchant gateway API",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.status.ts",
+          "plugin": "x402"
+        },
+        {
+          "name": "goat.x402.payment.submitSignature",
+          "description": "Submit payer signature to merchant gateway (supports EIP-712 signing)",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.submit-signature.ts",
+          "plugin": "x402"
+        },
+        {
+          "name": "goat.x402.payment.transfer",
+          "description": "Execute payer wallet token transfer to merchant payToAddress",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/x402/actions/payment.transfer.ts",
+          "plugin": "x402"
+        }
+      ]
+    },
+    {
+      "id": "bitcoin",
+      "label": "bitcoin",
+      "actionCount": 3,
+      "actions": [
+        {
+          "name": "bitcoin.block_hash",
+          "description": "Get the Bitcoin block hash at a given height from the on-chain oracle",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitcoin/actions/block-hash.ts",
+          "plugin": "bitcoin"
+        },
+        {
+          "name": "bitcoin.latest_height",
+          "description": "Get the latest Bitcoin block height known to the on-chain oracle",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitcoin/actions/latest-height.ts",
+          "plugin": "bitcoin"
+        },
+        {
+          "name": "bitcoin.network_name",
+          "description": "Get the Bitcoin network name (e.g. mainnet, testnet3) from the on-chain oracle",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/bitcoin/actions/network-name.ts",
+          "plugin": "bitcoin"
+        }
+      ]
+    },
+    {
+      "id": "erc721",
+      "label": "erc721",
+      "actionCount": 3,
+      "actions": [
+        {
+          "name": "erc721.balance",
+          "description": "Query ERC721 NFT balance for an address",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc721/actions/balance.ts",
+          "plugin": "erc721"
+        },
+        {
+          "name": "erc721.mint",
+          "description": "Mint a new ERC721 NFT to an address",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc721/actions/mint.ts",
+          "plugin": "erc721"
+        },
+        {
+          "name": "erc721.transfer",
+          "description": "Transfer an ERC721 NFT from one address to another",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/erc721/actions/transfer.ts",
+          "plugin": "erc721"
+        }
+      ]
+    },
+    {
+      "id": "goat-token",
+      "label": "goat token",
+      "actionCount": 3,
+      "actions": [
+        {
+          "name": "goat_token.delegate",
+          "description": "Delegate GOAT token voting power to the specified address",
+          "riskLevel": "medium",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/goat-token/actions/delegate.ts",
+          "plugin": "goat-token"
+        },
+        {
+          "name": "goat_token.get_delegates",
+          "description": "Get the address that a given account has delegated their GOAT voting power to",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/goat-token/actions/get-delegates.ts",
+          "plugin": "goat-token"
+        },
+        {
+          "name": "goat_token.get_votes",
+          "description": "Get the current voting power of an address for the GOAT governance token",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/goat-token/actions/get-votes.ts",
+          "plugin": "goat-token"
+        }
+      ]
+    },
+    {
+      "id": "layerzero",
+      "label": "layerzero",
+      "actionCount": 3,
+      "actions": [
+        {
+          "name": "oft.quote_oft",
+          "description": "Get detailed OFT quote including transfer limits and fee breakdown for a LayerZero cross-chain transfer from Goat Network",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/layerzero/actions/quote-oft.ts",
+          "plugin": "layerzero"
+        },
+        {
+          "name": "oft.quote_send",
+          "description": "Estimate the messaging fee for a LayerZero OFT cross-chain token transfer from Goat Network",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/layerzero/actions/quote-send.ts",
+          "plugin": "layerzero"
+        },
+        {
+          "name": "oft.send",
+          "description": "Execute a LayerZero OFT cross-chain token transfer from Goat Network to another chain",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet"
+          ],
+          "file": "plugins/layerzero/actions/send.ts",
+          "plugin": "layerzero"
+        }
+      ]
+    },
+    {
+      "id": "wgbtc",
+      "label": "wgbtc",
+      "actionCount": 3,
+      "actions": [
+        {
+          "name": "wgbtc.balance",
+          "description": "Query WGBTC token balance for an address",
+          "riskLevel": "read",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wgbtc/actions/balance.ts",
+          "plugin": "wgbtc"
+        },
+        {
+          "name": "wgbtc.unwrap",
+          "description": "Unwrap WGBTC back to native BTC by calling withdraw on the WGBTC contract",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wgbtc/actions/unwrap.ts",
+          "plugin": "wgbtc"
+        },
+        {
+          "name": "wgbtc.wrap",
+          "description": "Wrap native BTC into WGBTC by sending BTC to the WGBTC contract",
+          "riskLevel": "high",
+          "networks": [
+            "goat-mainnet",
+            "goat-testnet"
+          ],
+          "file": "plugins/wgbtc/actions/wrap.ts",
+          "plugin": "wgbtc"
+        }
+      ]
+    },
+    {
+      "id": "faucet",
+      "label": "faucet",
+      "actionCount": 2,
+      "actions": [
+        {
+          "name": "faucet.get_chains",
+          "description": "List available chains supported by the Goat testnet faucet",
+          "riskLevel": "read",
+          "networks": [
+            "goat-testnet"
+          ],
+          "file": "plugins/faucet/actions/get-chains.ts",
+          "plugin": "faucet"
+        },
+        {
+          "name": "faucet.request_funds",
+          "description": "Request testnet tokens from the Goat faucet",
+          "riskLevel": "low",
+          "networks": [
+            "goat-testnet"
+          ],
+          "file": "plugins/faucet/actions/request-funds.ts",
+          "plugin": "faucet"
+        }
+      ]
+    }
+  ],
+  "adapters": [
+    {
+      "id": "langchain",
+      "label": "LangChain",
+      "file": "adapters/langchain/tools.ts"
+    },
+    {
+      "id": "mcp",
+      "label": "Model Context Protocol",
+      "file": "adapters/mcp/tools.ts"
+    },
+    {
+      "id": "openai",
+      "label": "OpenAI Function Calling",
+      "file": "adapters/openai/tools.ts"
+    },
+    {
+      "id": "openai-agents",
+      "label": "OpenAI Agents SDK",
+      "file": "adapters/openai-agents/tools.ts"
+    },
+    {
+      "id": "vercel-ai",
+      "label": "Vercel AI SDK",
+      "file": "adapters/vercel-ai/tools.ts"
+    }
+  ],
+  "tokenRegistry": [
+    {
+      "key": "WGBTC",
+      "symbol": "WGBTC",
+      "address": "0xBC10000000000000000000000000000000000000",
+      "name": "Wrapped GOAT BTC"
+    },
+    {
+      "key": "GOAT",
+      "symbol": "GOAT",
+      "address": "0xbC10000000000000000000000000000000000001",
+      "name": "Goat Token"
+    },
+    {
+      "key": "BRIDGE",
+      "symbol": "BRIDGE",
+      "address": "0xBC10000000000000000000000000000000000003",
+      "name": "Bridge"
+    },
+    {
+      "key": "BITCOIN",
+      "symbol": "BITCOIN",
+      "address": "0xbC10000000000000000000000000000000000005",
+      "name": "Bitcoin Oracle"
+    },
+    {
+      "key": "OKU_SWAP_ROUTER",
+      "symbol": "OKU_SWAP_ROUTER",
+      "address": "0xaa52bB8110fE38D0d2d2AF0B85C3A3eE622CA455",
+      "name": "OKU SwapRouter02"
+    },
+    {
+      "key": "OKU_QUOTER",
+      "symbol": "OKU_QUOTER",
+      "address": "0x5911cB3633e764939edc2d92b7e1ad375Bb57649",
+      "name": "OKU QuoterV2"
+    },
+    {
+      "key": "OKU_POSITION_MANAGER",
+      "symbol": "OKU_POSITION_MANAGER",
+      "address": "0x743E03cceB4af2efA3CC76838f6E8B50B63F184c",
+      "name": "OKU PositionManager"
+    },
+    {
+      "key": "OKU_FACTORY",
+      "symbol": "OKU_FACTORY",
+      "address": "0xcb2436774C3e191c85056d248EF4260ce5f27A9D",
+      "name": "OKU V3Factory"
+    },
+    {
+      "key": "LZ_ENDPOINT",
+      "symbol": "LZ_ENDPOINT",
+      "address": "0x6F475642a6e85809B1c36Fa62763669b1b48DD5B",
+      "name": "LayerZero Endpoint V2"
+    }
+  ],
+  "showcase": {
+    "checkoutFlow": [
+      {
+        "name": "goat.x402.payment.create",
+        "description": "Create x402 payment intent via merchant gateway API",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402/actions/payment.create.ts",
+        "plugin": "x402"
+      },
+      {
+        "name": "goat.x402.payment.submitSignature",
+        "description": "Submit payer signature to merchant gateway (supports EIP-712 signing)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402/actions/payment.submit-signature.ts",
+        "plugin": "x402"
+      },
+      {
+        "name": "goat.x402.payment.transfer",
+        "description": "Execute payer wallet token transfer to merchant payToAddress",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402/actions/payment.transfer.ts",
+        "plugin": "x402"
+      },
+      {
+        "name": "goat.x402.payment.status",
+        "description": "Get x402 payment status via merchant gateway API",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402/actions/payment.status.ts",
+        "plugin": "x402"
+      },
+      {
+        "name": "goat.x402.payment.cancel",
+        "description": "Cancel x402 payment via merchant gateway API",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402/actions/payment.cancel.ts",
+        "plugin": "x402"
+      },
+      {
+        "name": "wallet.resolve_token",
+        "description": "Resolve a token symbol to its on-chain contract address",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/resolve-token.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.balance",
+        "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/balance.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "faucet.request_funds",
+        "description": "Request testnet tokens from the Goat faucet",
+        "riskLevel": "low",
+        "networks": [
+          "goat-testnet"
+        ],
+        "file": "plugins/faucet/actions/request-funds.ts",
+        "plugin": "faucet"
+      },
+      {
+        "name": "erc8004.register_agent",
+        "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent.",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/register-agent.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "goat.x402.merchant.auth.register",
+        "description": "Register a new merchant on the x402 merchant portal (pending admin approval)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/auth.register.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.dashboard.stats",
+        "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/dashboard.stats.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.orders.list",
+        "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/orders.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.balance.get",
+        "description": "Get x402 merchant fee balance",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/balance.get.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.create",
+        "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/webhooks.create.ts",
+        "plugin": "x402-merchant"
+      }
+    ],
+    "merchantFlow": [
+      {
+        "name": "goat.x402.merchant.addresses.add",
+        "description": "Add a receiving address for a chain+token pair (owner only)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/addresses.add.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.addresses.list",
+        "description": "List x402 merchant receiving addresses",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/addresses.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.addresses.remove",
+        "description": "Remove a receiving address by chain and token symbol (owner only)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/addresses.remove.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.api-keys.get",
+        "description": "View API key info (secret is masked)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/api-keys.get.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.api-keys.rotate",
+        "description": "Rotate API keys (invalidates current keys immediately, owner only). Save the new api_secret from response!",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/api-keys.rotate.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.audit-logs.list",
+        "description": "Get merchant audit logs (profile, address, webhook, key rotation events)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/audit-logs.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.auth.login",
+        "description": "Login to x402 merchant portal and obtain access/refresh tokens. Use the returned access_token in subsequent action calls.",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/auth.login.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.auth.refresh",
+        "description": "Refresh x402 merchant portal access token using a refresh token. Use the returned access_token in subsequent action calls.",
+        "riskLevel": "low",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/auth.refresh.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.auth.register-invite",
+        "description": "Register on x402 merchant portal using an invite code (auto-approved). Use the returned access_token in subsequent action calls.",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/auth.register-invite.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.auth.register",
+        "description": "Register a new merchant on the x402 merchant portal (pending admin approval)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/auth.register.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.balance.fees-config",
+        "description": "Get x402 merchant fee configuration per chain",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/balance.fees-config.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.balance.get",
+        "description": "Get x402 merchant fee balance",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/balance.get.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.balance.transactions",
+        "description": "Get x402 merchant balance transactions (paginated)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/balance.transactions.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.callback-contracts.cancel-submission",
+        "description": "Cancel a pending callback contract submission (owner only)",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/callback-contracts.cancel-submission.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.callback-contracts.list",
+        "description": "List callback contracts (active + pending/rejected submissions, DELEGATE mode)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/callback-contracts.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.callback-contracts.remove",
+        "description": "Remove an active callback contract (owner only, blocked if in-flight orders exist)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/callback-contracts.remove.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.callback-contracts.submit",
+        "description": "Submit a callback contract for admin review (owner only, DELEGATE mode)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/callback-contracts.submit.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.dashboard.stats",
+        "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/dashboard.stats.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.invite-codes.create",
+        "description": "Create a single-use invite code for a new member (owner only)",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/invite-codes.create.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.invite-codes.list",
+        "description": "List merchant invite codes (owner only)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/invite-codes.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.invite-codes.revoke",
+        "description": "Revoke an unused invite code (owner only)",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/invite-codes.revoke.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.orders.get",
+        "description": "Get x402 merchant order details (includes payment and payout info)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/orders.get.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.orders.list",
+        "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/orders.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.profile.get",
+        "description": "Get x402 merchant profile information",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/profile.get.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.profile.update",
+        "description": "Update x402 merchant profile (name and logo only, owner only)",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/profile.update.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.supported-tokens.list",
+        "description": "List system-supported chains and tokens (chain_id, symbol, decimals, explorer)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/supported-tokens.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.create",
+        "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/webhooks.create.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.delete",
+        "description": "Delete a webhook endpoint (owner only)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/webhooks.delete.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.list",
+        "description": "List x402 merchant webhooks",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/webhooks.list.ts",
+        "plugin": "x402-merchant"
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.update",
+        "description": "Update a webhook (toggle enabled, change URL or events, owner only)",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/x402-merchant/actions/webhooks.update.ts",
+        "plugin": "x402-merchant"
+      }
+    ],
+    "identityFlow": [
+      {
+        "name": "erc8004.get_agent_wallet",
+        "description": "Get the linked wallet address for an agent from the ERC-8004 Identity Registry",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/get-agent-wallet.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.get_clients",
+        "description": "Get the list of client addresses that have submitted feedback for an agent in the ERC-8004 Reputation Registry",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/get-clients.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.get_metadata",
+        "description": "Read a metadata entry for an agent from the ERC-8004 Identity Registry",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/get-metadata.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.get_reputation",
+        "description": "Get the reputation summary for an agent from the ERC-8004 Reputation Registry. Filter by client addresses and tags. Pass empty arrays/strings for no filter.",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/get-reputation.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.give_feedback",
+        "description": "Submit feedback for an agent in the ERC-8004 Reputation Registry. Value is a signed integer with decimals (e.g. value=87, decimals=0 for a score of 87; value=9977, decimals=2 for 99.77%).",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/give-feedback.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.register_agent",
+        "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent.",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/register-agent.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.revoke_feedback",
+        "description": "Revoke previously submitted feedback for an agent in the ERC-8004 Reputation Registry. Only the original feedback submitter can revoke.",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/revoke-feedback.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.set_agent_uri",
+        "description": "Update the registration URI for an agent in the ERC-8004 Identity Registry. Only the agent owner can call this.",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/set-agent-uri.ts",
+        "plugin": "erc8004"
+      },
+      {
+        "name": "erc8004.set_metadata",
+        "description": "Set a metadata entry for an agent in the ERC-8004 Identity Registry. Only the agent owner can call this.",
+        "riskLevel": "medium",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/erc8004/actions/set-metadata.ts",
+        "plugin": "erc8004"
+      }
+    ],
+    "walletFlow": [
+      {
+        "name": "wallet.approve_erc20",
+        "description": "Approve ERC20 token spending allowance for a spender address",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/approve-erc20.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.balance",
+        "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/balance.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.contract_read",
+        "description": "Read data from a smart contract (view/pure function call)",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/contract-read.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.contract_write",
+        "description": "Write to a smart contract (state-changing function call)",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/contract-write.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.deploy_contract",
+        "description": "Deploy a smart contract on-chain given its ABI and bytecode",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/deploy-contract.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.get_allowance",
+        "description": "Query ERC20 token allowance for a given owner and spender",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/get-allowance.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.get_details",
+        "description": "Get wallet details including address, network, and native balance",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/get-details.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.resolve_token",
+        "description": "Resolve a token symbol to its on-chain contract address",
+        "riskLevel": "read",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/resolve-token.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.transfer_erc20",
+        "description": "Transfer ERC20 tokens to an address",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/transfer-erc20.ts",
+        "plugin": "wallet"
+      },
+      {
+        "name": "wallet.transfer_native",
+        "description": "Transfer native token (e.g. ETH/BTC) to an address",
+        "riskLevel": "high",
+        "networks": [
+          "goat-mainnet",
+          "goat-testnet"
+        ],
+        "file": "plugins/wallet/actions/transfer-native.ts",
+        "plugin": "wallet"
+      }
+    ]
+  },
+  "toolPreviews": {
+    "openai": [
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.payment.create",
+          "description": "Create x402 payment intent via merchant gateway API",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.payment.submitSignature",
+          "description": "Submit payer signature to merchant gateway (supports EIP-712 signing)",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.payment.transfer",
+          "description": "Execute payer wallet token transfer to merchant payToAddress",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.payment.status",
+          "description": "Get x402 payment status via merchant gateway API",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.payment.cancel",
+          "description": "Cancel x402 payment via merchant gateway API",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "wallet.resolve_token",
+          "description": "Resolve a token symbol to its on-chain contract address",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "wallet.balance",
+          "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "faucet.request_funds",
+          "description": "Request testnet tokens from the Goat faucet",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "erc8004.register_agent",
+          "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent.",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.merchant.auth.register",
+          "description": "Register a new merchant on the x402 merchant portal (pending admin approval)",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.merchant.dashboard.stats",
+          "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.merchant.orders.list",
+          "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.merchant.balance.get",
+          "description": "Get x402 merchant fee balance",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "goat.x402.merchant.webhooks.create",
+          "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!",
+          "parameters": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      }
+    ],
+    "mcp": [
+      {
+        "name": "goat.x402.payment.create",
+        "description": "Create x402 payment intent via merchant gateway API",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.payment.submitSignature",
+        "description": "Submit payer signature to merchant gateway (supports EIP-712 signing)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.payment.transfer",
+        "description": "Execute payer wallet token transfer to merchant payToAddress",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.payment.status",
+        "description": "Get x402 payment status via merchant gateway API",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.payment.cancel",
+        "description": "Cancel x402 payment via merchant gateway API",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "wallet.resolve_token",
+        "description": "Resolve a token symbol to its on-chain contract address",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "wallet.balance",
+        "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "faucet.request_funds",
+        "description": "Request testnet tokens from the Goat faucet",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "erc8004.register_agent",
+        "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.merchant.auth.register",
+        "description": "Register a new merchant on the x402 merchant portal (pending admin approval)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.merchant.dashboard.stats",
+        "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.merchant.orders.list",
+        "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.merchant.balance.get",
+        "description": "Get x402 merchant fee balance",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.create",
+        "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
+    "vercelAI": [
+      {
+        "name": "goat.x402.payment.create",
+        "description": "Create x402 payment intent via merchant gateway API"
+      },
+      {
+        "name": "goat.x402.payment.submitSignature",
+        "description": "Submit payer signature to merchant gateway (supports EIP-712 signing)"
+      },
+      {
+        "name": "goat.x402.payment.transfer",
+        "description": "Execute payer wallet token transfer to merchant payToAddress"
+      },
+      {
+        "name": "goat.x402.payment.status",
+        "description": "Get x402 payment status via merchant gateway API"
+      },
+      {
+        "name": "goat.x402.payment.cancel",
+        "description": "Cancel x402 payment via merchant gateway API"
+      },
+      {
+        "name": "wallet.resolve_token",
+        "description": "Resolve a token symbol to its on-chain contract address"
+      },
+      {
+        "name": "wallet.balance",
+        "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)"
+      },
+      {
+        "name": "faucet.request_funds",
+        "description": "Request testnet tokens from the Goat faucet"
+      },
+      {
+        "name": "erc8004.register_agent",
+        "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent."
+      },
+      {
+        "name": "goat.x402.merchant.auth.register",
+        "description": "Register a new merchant on the x402 merchant portal (pending admin approval)"
+      },
+      {
+        "name": "goat.x402.merchant.dashboard.stats",
+        "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)"
+      },
+      {
+        "name": "goat.x402.merchant.orders.list",
+        "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)"
+      },
+      {
+        "name": "goat.x402.merchant.balance.get",
+        "description": "Get x402 merchant fee balance"
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.create",
+        "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!"
+      }
+    ],
+    "openaiAgents": [
+      {
+        "name": "goat.x402.payment.create",
+        "description": "Create x402 payment intent via merchant gateway API"
+      },
+      {
+        "name": "goat.x402.payment.submitSignature",
+        "description": "Submit payer signature to merchant gateway (supports EIP-712 signing)"
+      },
+      {
+        "name": "goat.x402.payment.transfer",
+        "description": "Execute payer wallet token transfer to merchant payToAddress"
+      },
+      {
+        "name": "goat.x402.payment.status",
+        "description": "Get x402 payment status via merchant gateway API"
+      },
+      {
+        "name": "goat.x402.payment.cancel",
+        "description": "Cancel x402 payment via merchant gateway API"
+      },
+      {
+        "name": "wallet.resolve_token",
+        "description": "Resolve a token symbol to its on-chain contract address"
+      },
+      {
+        "name": "wallet.balance",
+        "description": "Query wallet balance (native token when tokenAddress absent, ERC20 otherwise)"
+      },
+      {
+        "name": "faucet.request_funds",
+        "description": "Request testnet tokens from the Goat faucet"
+      },
+      {
+        "name": "erc8004.register_agent",
+        "description": "Register a new agent in the ERC-8004 Identity Registry. Returns the transaction hash. The agentURI should point to a JSON registration file describing the agent."
+      },
+      {
+        "name": "goat.x402.merchant.auth.register",
+        "description": "Register a new merchant on the x402 merchant portal (pending admin approval)"
+      },
+      {
+        "name": "goat.x402.merchant.dashboard.stats",
+        "description": "Get merchant dashboard statistics (revenue, order counts, recent orders)"
+      },
+      {
+        "name": "goat.x402.merchant.orders.list",
+        "description": "List x402 merchant orders with optional filters (status, flow, chain, date range)"
+      },
+      {
+        "name": "goat.x402.merchant.balance.get",
+        "description": "Get x402 merchant fee balance"
+      },
+      {
+        "name": "goat.x402.merchant.webhooks.create",
+        "description": "Create a new webhook endpoint (owner only). Save the webhook secret from response!"
+      }
+    ]
+  }
+}
