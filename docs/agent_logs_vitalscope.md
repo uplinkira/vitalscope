@@ -1,3 +1,77 @@
+## 2026-03-15 02:00
+
+### group_vitalscope_rename_and_new_repo_reset
+- dialogue_id: `dlg_202603150200_openai_vitalscope_rename_and_repo_reset`
+- task_group: `group_vitalscope_rename_and_new_repo_reset`
+- changed_paths:
+  - `D+20260314+goat/vitalscope/README.md`
+  - `D+20260314+goat/vitalscope/index.html`
+  - `D+20260314+goat/vitalscope/LICENSE`
+  - `D+20260314+goat/vitalscope/scripts/generate-agentkit-demo-assets.mjs`
+  - `D+20260314+goat/vitalscope/generated/agentkit-demo.json`
+  - `D+20260314+goat/vitalscope/docs/agent_logs_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/explain_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/goal_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/issue_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/note_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/pitch_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/reportRef_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/result_vitalscope.md`
+  - `D+20260314+goat/vitalscope/docs/repo_deploy_workflow_2026.md`
+  - `D+20260314+goat/micro-mirror-deploy/README.md`
+  - `D+20260314+goat/micro-mirror-deploy/docs/repo_deploy_workflow_2026.md`
+  - `D+20260314+goat/micro-mirror-deploy/docs/reportRef_micro_mirror.md`
+  - `D+20260314+goat/micro-mirror-deploy/docs/result_micro_mirror.md`
+  - `ccrVscode/dialogue/prompt_202603150205_vitalscope_rename_challenge.md`
+  - `ccrVscode/dialogue/dlg_202603150200_openai_vitalscope_rename_and_repo_reset.md`
+  - `ccrVscode/dialogue/dlg_202603150205_gemini_vitalscope_rename_challenge.md`
+  - `ccrVscode/docs/target_optimization/conv_202603150200_vitalscope_rename_and_snapshot_split.md`
+- decision:
+  - 将长期主项目正式更名为 `VitalScope`
+  - 将主仓库目录从 `micro-mirror` 重命名为 `vitalscope`
+  - 将主仓库切换到单人长期开发定位
+  - 保留 `micro-mirror-deploy` 作为 `2026-03-14` 深圳黑客松快照仓库
+  - 直接创建并推送新的 GitHub 仓库 `uplinkira/vitalscope`
+- alternatives:
+  - 继续沿用 `Micro Mirror`
+  - 让 deploy 仓库也一起改名
+  - 不新建仓库，只继续在旧仓库上修补
+- divergence:
+  - 选择“新主仓库 + 旧快照仓库并存”的分层方案
+- decision_rationale:
+  - 用户明确要求长期项目改成更专业的英文健康可视化名字
+  - 用户明确要求长期项目后续按单人继续发展
+  - 用户明确要求 deploy 仓库保留团队、参赛和获奖快照信息
+- verification:
+  - `git config --global user.name`
+  - `git config --global user.email`
+  - `curl -s https://api.github.com/repos/uplinkira/micro-mirror/branches | rg '"name"'`
+  - `curl -s https://api.github.com/repos/uplinkira/micro-mirror/tags`
+  - `git remote set-url origin https://github.com/uplinkira/vitalscope.git`
+  - `git push -u origin main`
+  - `git -C /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror-deploy push origin main`
+  - 结果:
+    - Git 全局身份已修正为 `uplinkira`
+    - GitHub API 显示旧主仓库当前只有 `main` 且无 tags
+    - 新仓库 `uplinkira/vitalscope` 创建成功，API 返回 `201`
+    - `vitalscope` 已推送成功，首个远端提交为 `5f6138d`
+    - `micro-mirror-deploy` 已更新推送到 `97e48aa`
+- actual_ccr_model_usage:
+  - 主侧实现、GitHub API 检查与仓库创建: `Codex / GPT-5`
+  - 次侧 challenge:
+    - `Gemini` via `agent_roundtrip.sh` 失败，原因：`HTTP 401 Invalid apiKey`
+  - fallback:
+    - 依据 GitHub 官方文档、Vercel 官方文档与本地/远端核对结果收敛
+- next_tasks:
+  - 追加 push 后的日志提交
+  - 给用户解释 contributors 残留旧账号的最可能原因
+
+### convergence_note
+- added_conv_file: `ccrVscode/docs/target_optimization/conv_202603150200_vitalscope_rename_and_snapshot_split.md`
+- covered_dialogue_ids:
+  - `dlg_202603150200_openai_vitalscope_rename_and_repo_reset`
+  - `dlg_202603150205_gemini_vitalscope_rename_challenge`
+
 ## 2026-03-15 01:25
 
 ### group_repo_positioning_push_verification
