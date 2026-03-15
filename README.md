@@ -1,33 +1,32 @@
-# Micro Mirror
+# VitalScope
 
-Micro Mirror is a preventive wellness product prototype that turns a daily face photo into a longitudinal health direction signal, then extends that signal with smart ring data, agent identity, and GOAT-based payment flows.
+VitalScope is a health visualization product that turns daily face images and optional wearable signals into longitudinal wellness direction, recovery tracking, and action-oriented care planning.
 
-## Team
+## Maintainer
 
 - `uplinkira`
-- `2` collaborating bioinformatics graduate researchers from the Chinese Academy of Sciences
 
-This repository is the long-term product repository and source of truth for the project.
+This repository is the standalone long-term codebase for the product and is intended for continued solo development.
 
 ## Product Thesis
 
-Most people do not need more one-off health anxiety. They need a lightweight way to notice recovery drift early, compare change over time, and decide what to adjust next.
+VitalScope starts from a simple habit:
+- capture one face image per day
+- keep those images on a comparable timeline
+- turn visible change over time into a preventive wellness direction
+- explain the result with both TCM-style framing and modern medical-style reporting
 
-Micro Mirror starts with the smallest repeatable ritual:
-- take one face photo per day
-- keep the data on a timeline
-- convert that timeline into a preventive health direction
-- explain the result using both TCM-style framing and modern medical-style reporting
-
-The upgrade path adds a smart ring so the product can combine visual signals with physiological signals such as:
+The long-term product path adds wearable inputs such as:
 - HRV
 - resting heart rate
 - sleep recovery
 
+That lets the product evolve from “health mirror” into a broader health visualization system.
+
 ## Current MVP
 
 - daily camera capture or image upload fallback
-- local timeline of daily mirror records
+- local timeline of daily records
 - dual-reference report:
   - TCM-inspired interpretation
   - modern medical-style interpretation
@@ -46,25 +45,25 @@ The upgrade path adds a smart ring so the product can combine visual signals wit
   - `Quest XP`
   - `Quest Checkout Board`
 
-## Why The Agent Matters
+## Product Role Of The Agent
 
-In Micro Mirror, the agent is not just a chatbot wrapper. It has a concrete job across three layers:
+In VitalScope, the agent is not only a text interface. It has three concrete jobs:
 
 1. Observe
 - read the image timeline
-- combine sleep, stress, hydration, and optional ring signals
+- combine sleep, stress, hydration, and optional wearable signals
 
 2. Decide
-- generate an actionable preventive direction
-- present the result in dual framing so the user can understand both intuition and structure
+- generate an actionable wellness direction
+- present both intuitive and structured interpretations
 
 3. Act
 - move the user into subscription or hardware checkout
-- later accumulate trust and identity using `ERC-8004`
+- accumulate trust and identity through `ERC-8004`
 
-## Why GOAT / AgentKit Is Central
+## Why GOAT / AgentKit Stays Central
 
-This repository keeps the product direction close to the infrastructure that the team wants to keep building on:
+VitalScope keeps building around the same infrastructure spine:
 
 - `x402`
   - payment intent and settlement framing for the smart ring preorder path
@@ -75,24 +74,18 @@ This repository keeps the product direction close to the infrastructure that the
 - `wallet`
   - browser wallet connectivity for the live demo
 
-The repository also includes generated assets that make those integrations visible instead of only described:
+Generated assets that expose those integrations directly:
 - `generated/agentkit-catalog.json`
 - `generated/agentkit-demo.json`
 
 ## Repository Role
 
-- Primary source repository:
-  - `https://github.com/uplinkira/micro-mirror.git`
-- Release and deployment mirror:
+- Active repository:
+  - `https://github.com/uplinkira/vitalscope.git`
+- Hackathon snapshot / deploy archive:
   - `https://github.com/uplinkira/micro-mirror-deploy.git`
 
-The recommended long-term workflow is:
-- develop in `micro-mirror`
-- bind Vercel directly to `micro-mirror`
-- keep `micro-mirror-deploy` only as a release archive while the migration finishes
-
-The detailed migration guide lives in:
-- `docs/repo_deploy_workflow_2026.md`
+The archived `micro-mirror-deploy` repository preserves the March 14, 2026 Shenzhen hackathon snapshot. This repository is the continuation path.
 
 ## Repository Structure
 
@@ -102,15 +95,15 @@ The detailed migration guide lives in:
   - generated AgentKit catalog and demo workflow assets
 - `scripts/generate-agentkit-demo-assets.mjs`
   - refreshes AgentKit-derived demo assets
-- `docs/pitch_micro_mirror.md`
-  - one-line summary, pitch script, and judge Q&A
+- `docs/pitch_vitalscope.md`
+  - product summary, pitch script, and judge Q&A
 - `docs/repo_deploy_workflow_2026.md`
   - GitHub, Vercel, token, pricing, and single-repo workflow guide
 
 ## Local Run
 
 ```bash
-cd D+20260314+goat/micro-mirror
+cd D+20260314+goat/vitalscope
 python3 -m http.server 8000
 ```
 
@@ -120,13 +113,13 @@ Open:
 To refresh the AgentKit demo assets:
 
 ```bash
-cd D+20260314+goat/micro-mirror
+cd D+20260314+goat/vitalscope
 node scripts/generate-agentkit-demo-assets.mjs
 ```
 
 ## Medical Scope
 
-Micro Mirror is a product prototype and should not be treated as a diagnostic system, a regulated medical device, or a substitute for professional medical advice.
+VitalScope is a product prototype and should not be treated as a diagnostic system, a regulated medical device, or a substitute for professional medical advice.
 
 ## License
 
@@ -139,4 +132,4 @@ Why this choice:
 - it includes an explicit patent grant, which is stronger than a bare-minimum permissive license for future product work
 
 Important note:
-- the `Micro Mirror` product name, branding, pitch framing, and other unlicensed trademarks remain reserved to their respective owners under the terms of `Apache-2.0`
+- the `VitalScope` product name, branding, pitch framing, and other unlicensed trademarks remain reserved to their respective owners under the terms of `Apache-2.0`

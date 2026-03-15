@@ -118,7 +118,7 @@ const workflows = [
     judgePitch: "把健康建议服务注册成可追踪、可积累信誉的链上 agent。",
     businessUse: "适合把分析 agent 版本、方法论和服务信誉沉淀为长期资产。",
     currentMvp: "页面已讲清 agent 身份层的产品方向，但还没有真实上链注册。",
-    nextStep: "把 `Micro Mirror Recovery Agent` 注册到测试网，并用标签化反馈积累信誉。",
+    nextStep: "把 `VitalScope Health Agent` 注册到测试网，并用标签化反馈积累信誉。",
     actionNames: [
       "erc8004.register_agent",
       "erc8004.set_agent_uri",

@@ -1,15 +1,15 @@
-# Micro Mirror 2026 GitHub + Vercel Workflow Guide
+# VitalScope 2026 GitHub + Vercel Workflow Guide
 
 ## TL;DR
 
 The target end state is:
-- keep only `micro-mirror` as the active main repository
-- bind Vercel directly to `https://github.com/uplinkira/micro-mirror`
+- keep only `vitalscope` as the active main repository
+- bind Vercel directly to `https://github.com/uplinkira/vitalscope`
 - let pushes to `main` trigger production deployment automatically
 
-Until that cutover is finished:
-- `micro-mirror` stays the source of truth
-- `micro-mirror-deploy` stays a release mirror and deployment archive
+The historical deploy mirror stays:
+- `micro-mirror-deploy`
+- as the archived March 14, 2026 hackathon snapshot and release evidence repo
 
 This file also absorbs the old `VERCEL_TOKEN` guide, so no separate token manual is needed.
 
@@ -24,7 +24,7 @@ For this project, Vercel is not “running a big server” for us. It is mainly 
 2. Build and package
 - Vercel takes the repository snapshot for that commit
 - it runs the configured build or static export flow
-- for the current Micro Mirror MVP, that is effectively a static front-end deployment
+- for the current VitalScope MVP, that is effectively a static front-end deployment
 
 3. Preview vs production routing
 - pushes on the production branch become production deployments
@@ -44,14 +44,14 @@ The current MVP is a very good fit for Vercel `Hobby` because:
 
 - the app is mostly static HTML, CSS, and browser-side JavaScript
 - camera access happens in the browser
-- the wallet interaction is client-side
+- wallet interaction is client-side
 - there is no heavy always-on backend in this repository
-- current expected traffic is hackathon-demo level rather than production-scale consumer traffic
+- current expected traffic is still low-volume product preview traffic
 
 That combination keeps the project light enough that the free plan is usually sufficient for:
 - personal testing
-- judge demos
-- portfolio-style product preview
+- product preview
+- portfolio-style demonstration
 
 ## Important Boundary: Why “Free” Does Not Mean “Unlimited”
 
@@ -62,26 +62,20 @@ According to Vercel's current plan documentation:
 So the reason this works without paying right now is:
 - the app is lightweight
 - the usage is still small
-- the project is still at demo / prototype stage
+- the repository is still in product-development stage
 
 It does not mean:
 - the plan is appropriate forever
 - the plan is the right choice for a commercial launch
 
-## Current Free-Plan Limits That Matter To This Team
+## Current Free-Plan Limits That Matter Here
 
-The exact quota table can change, so always re-check the official Vercel pricing pages before a high-stakes release. For planning purposes, the important practical limits are:
+The exact quota table can change, so always re-check the official Vercel pricing pages before a high-stakes release. For planning purposes, the practical limits are:
 
 - `Hobby` is for personal, non-commercial use
 - included usage is lower than paid plans
 - collaboration, governance, and advanced security are more limited than on paid tiers
-- once the project becomes a real product with multiple operators, more traffic, or revenue activity, `Pro` becomes the safer default
-
-For this project, the biggest triggers are:
-- multiple collaborators managing production together
-- meaningful public traffic growth
-- adding heavier backend functions or data services
-- moving from hackathon / prototype status into real commercial operations
+- once the project becomes a real product with public growth, backend load, or revenue activity, `Pro` becomes the safer default
 
 ## How Vercel Charges When You Upgrade
 
@@ -94,30 +88,27 @@ At the time of writing, Vercel publicly lists:
 - `Enterprise`
   - custom pricing
 
-This means the paid model is not just “one flat subscription forever”.
-
-The cost structure is:
+So the paid model is:
 - a base team plan
-- plus usage-based expansion when you exceed included resources on paid tiers
+- plus usage-based expansion on top of included resources
 
-For Micro Mirror, the practical reading is:
-- free is fine for the current static demo
-- `Pro` is the expected next step for team collaboration and productization
+For VitalScope, the practical reading is:
+- free is fine for the current static preview
+- `Pro` is the expected next step once the project becomes collaborative, public-facing, or commercial
 
-## When This Team Should Upgrade To `Pro`
+## When To Upgrade To `Pro`
 
 Upgrade when any of these become true:
 
-- the project is no longer just a personal or hackathon prototype
-- the team wants normal multi-person production collaboration
-- the deployment starts representing an active commercial or quasi-commercial product
+- the project is no longer just a personal development repo
+- the deployment represents an active commercial or quasi-commercial product
 - you add server-side features that create sustained usage
-- you need stronger logs, security controls, or operational guarantees
+- you need stronger logs, permissions, or operational guarantees
 
 ## Best 2026 Repository Strategy
 
 The cleanest long-term setup is:
-- one active repo: `micro-mirror`
+- one active repo: `vitalscope`
 - one production branch: `main`
 - one Vercel project connected directly to that repo
 
@@ -125,33 +116,29 @@ Why this is better:
 - no repo drift
 - no manual sync step before each release
 - cleaner issue tracking and commit history
-- easier onboarding for future collaborators
+- easier onboarding even if future collaborators join later
 
 ## What “Single Main Repo Bound To Vercel” Means
 
 In the target setup:
-- `micro-mirror` becomes the only development repository
-- Vercel connects directly to `uplinkira/micro-mirror`
+- `vitalscope` becomes the only development repository
+- Vercel connects directly to `uplinkira/vitalscope`
 - pushing to `main` creates the production deployment
 - pull requests or feature branches can create preview deployments
 
-Then `micro-mirror-deploy` becomes optional:
-- archive it
-- keep it read-only as historical release evidence
-- delete it later after the team fully stabilizes the new workflow
+Then `micro-mirror-deploy` becomes:
+- a read-only release archive
+- a hackathon evidence repository
+- an optional historical snapshot rather than an active development home
 
-## How To Move Vercel From `micro-mirror-deploy` To `micro-mirror`
-
-There are two practical ways.
-
-## Path A: Create A New Vercel Project From `micro-mirror`
+## Path A: Create A New Vercel Project From `vitalscope`
 
 This is the cleanest and lowest-risk path.
 
 1. Open:
-   - `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
+   - `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/vitalscope`
 2. Log in to Vercel
-3. Import the `micro-mirror` repository
+3. Import the `vitalscope` repository
 4. Keep the root directory as `.`
 5. Because this repo is a static site, default settings are usually enough
 6. Click `Deploy`
@@ -159,13 +146,9 @@ This is the cleanest and lowest-risk path.
    - Production Branch = `main`
 8. Confirm that future pushes to `main` deploy automatically
 
-Use this path if:
-- you do not need to preserve the current Vercel project shell
-- you want the simplest migration
+## Path B: Rebind An Existing Vercel Project To `vitalscope`
 
-## Path B: Rebind An Existing Vercel Project To `micro-mirror`
-
-Use this if you want to keep the current Vercel project and swap the connected Git repository.
+Use this if you want to keep the current Vercel project shell and only swap the connected Git repository.
 
 1. Open the existing Vercel project
 2. Go to:
@@ -173,28 +156,25 @@ Use this if you want to keep the current Vercel project and swap the connected G
    - `Git`
 3. Find the connected Git repository section
 4. Change or reconnect the Git repository to:
-   - `uplinkira/micro-mirror`
+   - `uplinkira/vitalscope`
 5. Confirm the production branch is:
    - `main`
 6. Trigger a redeploy
-7. Push a small test commit to `micro-mirror`
-8. Verify that the deployment now comes from the main repo rather than `micro-mirror-deploy`
-
-Use this path if:
-- you want to preserve the same project shell, domain, or settings
+7. Push a small test commit to `vitalscope`
+8. Verify that the deployment now comes from the new main repo
 
 ## How To Verify The Rebinding Worked
 
 After rebinding or creating the new project, check:
-- the Vercel dashboard shows the connected repository as `uplinkira/micro-mirror`
-- pushes to `main` in `micro-mirror` create production deployments
+- the Vercel dashboard shows the connected repository as `uplinkira/vitalscope`
+- pushes to `main` in `vitalscope` create production deployments
 - non-production branches or pull requests create preview deployments
-- the live page matches the latest commit from `micro-mirror`
+- the live page matches the latest commit from `vitalscope`
 
 ## Fastest Path If You Only Need A `vercel.app`
 
 Open:
-- `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/micro-mirror`
+- `https://vercel.com/new/clone?repository-url=https://github.com/uplinkira/vitalscope`
 
 Then:
 - log in
@@ -215,7 +195,7 @@ Then:
 ### Option B: Browser Login Then CLI Login
 
 ```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/vitalscope
 ./node_modules/.bin/vercel login
 ```
 
@@ -227,14 +207,14 @@ Then follow the CLI prompts.
 
 ```bash
 export VERCEL_TOKEN="your_token_here"
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/vitalscope
 ./node_modules/.bin/vercel --prod --token "$VERCEL_TOKEN"
 ```
 
 ### Method 2: Inline Token
 
 ```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/vitalscope
 ./node_modules/.bin/vercel --prod --token "your_token_here"
 ```
 
@@ -243,58 +223,28 @@ cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
 If the project already exists in Vercel and you want the local repo connected cleanly:
 
 ```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/vitalscope
 ./node_modules/.bin/vercel link
 ```
 
 If you need to connect a Git repository through CLI-assisted flow:
 
 ```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/vitalscope
 ./node_modules/.bin/vercel git connect
 ```
 
 ## Recommended Release Steps
 
-### Preferred Long-Term Release Flow
-
-1. Update `micro-mirror`
+1. Update `vitalscope`
 2. Verify locally
-3. Commit and push `micro-mirror`
-4. Let Vercel deploy from `micro-mirror`
-
-### Temporary Two-Repo Fallback
-
-Use this only until the Vercel binding is fully moved.
-
-1. Make sure `micro-mirror` is up to date
-
-```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
-git pull
-```
-
-2. Sync to the deploy mirror
-
-```bash
-rsync -a --exclude '.git' --exclude 'node_modules' \
-/Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror/ \
-/Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror-deploy/
-```
-
-3. Push the deployment mirror
-
-```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror-deploy
-git add .
-git commit -m "deploy latest stable demo"
-git push origin main
-```
+3. Commit and push `vitalscope`
+4. Let Vercel deploy from `vitalscope`
 
 ## Local Preview
 
 ```bash
-cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/micro-mirror
+cd /Users/orangesnail/Desktop/agent_yaqi/D+20260314+goat/vitalscope
 python3 -m http.server 8000
 ```
 
@@ -309,13 +259,13 @@ open http://127.0.0.1:8000
 
 ## Final Recommendation
 
-For the current demo stage:
-- free Vercel deployment is acceptable because the app is lightweight and traffic is small
+For the current stage:
+- free Vercel deployment is acceptable because the app is lightweight and traffic is still small
 
 For the long-term product stage:
 - the correct structure is one main repository bound directly to Vercel
-- the likely plan tier is `Pro` once the project becomes collaborative or commercial
+- the likely plan tier is `Pro` once the project becomes public-facing or commercial
 
 ## One-Sentence Version
 
-The best 2026 setup for Micro Mirror is: keep `micro-mirror` as the only active repo, bind Vercel directly to it, and treat `micro-mirror-deploy` as a temporary release archive rather than the long-term development home.
+The best 2026 setup for VitalScope is: keep `vitalscope` as the only active repo, bind Vercel directly to it, and keep `micro-mirror-deploy` only as the archived March 14, 2026 hackathon snapshot.

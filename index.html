@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Micro Mirror MVP</title>
+<title>VitalScope MVP</title>
 <style>
   :root {
     --bg: #efe7d7;
@@ -1246,9 +1246,9 @@
 <body>
 <header>
   <div class="brand">
-    <div class="brand-mark">MM</div>
+    <div class="brand-mark">VS</div>
     <div class="brand-copy">
-      <h1>Micro Mirror</h1>
+      <h1>VitalScope</h1>
       <p>每天拍一张脸，看见恢复趋势，再决定下一步养护与订购服务。</p>
     </div>
   </div>
@@ -1264,7 +1264,7 @@
 <main>
   <section class="hero">
     <article class="card hero-card">
-      <div class="eyebrow">Micro Mirror MVP</div>
+      <div class="eyebrow">VitalScope MVP</div>
       <h2>把“每天一张镜像”变成长期保健决策，而不是一次性焦虑。</h2>
       <p>
         基础版用摄像头做每日面部采集，结合睡眠、压力、补水与时间线变化，生成一个“疾病预防 / 保健方向”提示。
@@ -1283,8 +1283,8 @@
       </div>
       <div class="hero-dashboard">
         <div class="hero-dash-card">
-          <span>Mirror Rank</span>
-          <strong id="hero-rank">Mirror Seed</strong>
+          <span>Vital Rank</span>
+          <strong id="hero-rank">Vital Seed</strong>
           <small id="hero-level-note">完成连续镜像、支付闭环和 agent 身份后会不断升级。</small>
         </div>
         <div class="hero-dash-card">
@@ -1540,7 +1540,7 @@
             </div>
             <div class="field">
               <label for="order-note">订单说明</label>
-              <textarea id="order-note">用于黑客松演示：Micro Mirror 智能戒指订购 + 健康订阅。</textarea>
+              <textarea id="order-note">用于产品预览：VitalScope 智能戒指订购 + 健康订阅。</textarea>
             </div>
             <div class="order-actions">
               <button class="btn primary" id="connect-wallet">连接 MetaMask</button>
@@ -1590,7 +1590,7 @@
         <div class="section-head">
           <div>
             <h3>ERC-8004 Agent Identity Lab</h3>
-            <p>这里把 `Micro Mirror` 的健康 agent 从叙事变成可演示对象：先生成 sample agent metadata，再用 MetaMask 在 GOAT Testnet3 上注册身份，最后按 `agentId` 读取钱包与信誉摘要。</p>
+            <p>这里把 `VitalScope` 的健康 agent 从叙事变成可演示对象：先生成 sample agent metadata，再用 MetaMask 在 GOAT Testnet3 上注册身份，最后按 `agentId` 读取钱包与信誉摘要。</p>
           </div>
           <div class="badge mono" id="agent-lab-badge">identity ready</div>
         </div>
@@ -1651,7 +1651,7 @@
               <button class="btn secondary" id="agent-use-sample">恢复 sample agent</button>
               <button class="btn primary" id="agent-register">注册 ERC-8004 Agent</button>
               <a class="btn" id="agent-dashboard-link" href="https://goat-hackathon-2026.vercel.app/" target="_blank" rel="noreferrer">打开官方 Dashboard</a>
-              <a class="btn" id="agent-download-link" href="#" download="micro-mirror-agent.json">下载 metadata JSON</a>
+              <a class="btn" id="agent-download-link" href="#" download="vitalscope-agent.json">下载 metadata JSON</a>
             </div>
             <p class="helper">说明：当前实现会把 sample agent metadata 生成 `data:` URI，然后直接调用 Identity Registry 的 `register(string agentURI)`。Gas fee 属于链上网络费用，不是平台收入。</p>
             <pre class="code mono" id="agent-manifest-json">sample agent metadata</pre>
@@ -1693,10 +1693,10 @@
 </main>
 
 <footer>
-  <span>当前整理目录：<span class="mono">D+20260314+goat/micro-mirror</span></span>
+  <span>当前整理目录：<span class="mono">D+20260314+goat/vitalscope</span></span>
   <span>最终提交入口：<a href="https://julieshi.notion.site/8b33110376804173b6ce1c95ee4a25c6" target="_blank" rel="noreferrer">Submission link</a></span>
   <div class="spacer"></div>
-  <span>建议本地运行：<span class="mono">cd D+20260314+goat/micro-mirror && python3 -m http.server 8000</span></span>
+  <span>建议本地运行：<span class="mono">cd D+20260314+goat/vitalscope && python3 -m http.server 8000</span></span>
 </footer>
 
 <div class="toast-wrap" id="toast-wrap"></div>
@@ -1719,9 +1719,9 @@
     identity: "0x556089008Fc0a60cD09390Eca93477ca254A5522",
     reputation: "0xd9140951d8aE6E5F625a02F5908535e16e3af964",
   };
-  const RECORDS_KEY = "micro-mirror-records-v1";
-  const ORDERS_KEY = "micro-mirror-orders-v1";
-  const AGENT_LAB_KEY = "micro-mirror-agent-lab-v1";
+  const RECORDS_KEY = "vitalscope-records-v1";
+  const ORDERS_KEY = "vitalscope-orders-v1";
+  const AGENT_LAB_KEY = "vitalscope-agent-lab-v1";
   const PLANS = [
     {
       id: "daily",
@@ -1808,7 +1808,7 @@
     selectedWorkflowId: "ring-checkout",
     selectedSourceIndex: 0,
     agentLab: loadStorage(AGENT_LAB_KEY, () => ({
-      name: "Micro Mirror Recovery Agent",
+      name: "VitalScope Health Agent",
       description: "A health direction agent that turns daily face timeline signals and optional smart ring recovery data into wellness direction with both TCM and modern medical framing.",
       capabilities: "daily_face_timeline,wellness_direction,smart_ring_subscription,x402_checkout,erc8004_identity",
       endpoint: `${window.location.origin}${window.location.pathname}#agent-section`,
@@ -1877,7 +1877,7 @@
   }
 
   function collectAgentForm() {
-    state.agentLab.name = $("agent-name").value.trim() || "Micro Mirror Recovery Agent";
+    state.agentLab.name = $("agent-name").value.trim() || "VitalScope Health Agent";
     state.agentLab.description = $("agent-description").value.trim();
     state.agentLab.capabilities = $("agent-capabilities").value.trim();
     state.agentLab.endpoint = $("agent-endpoint").value.trim();
@@ -1896,7 +1896,7 @@
       capabilities,
       linkedWallets: state.wallet.account ? [state.wallet.account] : [],
       endpoint: state.agentLab.endpoint,
-      product: "Micro Mirror",
+      product: "VitalScope",
       agentRole: {
         observe: "Read camera timeline and optional ring signals.",
         decide: "Generate dual-framing wellness direction and next actions.",
@@ -1931,7 +1931,7 @@
     $("agent-reputation-registry").textContent = ERC8004_REGISTRY.reputation;
     $("agent-dashboard-link").href = GOAT_DASHBOARD_URL;
     $("agent-download-link").href = agentUri;
-    $("agent-download-link").download = "micro-mirror-agent.json";
+    $("agent-download-link").download = "vitalscope-agent.json";
     $("agent-role-note").textContent = state.wallet.account
       ? `当前连接钱包 ${short(state.wallet.account)}。注册时它会成为 agent 的 owner / linked wallet。`
       : "连接钱包后，sample metadata 里的 linkedWallets 会自动带上当前地址。";
@@ -2838,7 +2838,7 @@
 
   function resetSampleAgent() {
     state.agentLab = {
-      name: "Micro Mirror Recovery Agent",
+      name: "VitalScope Health Agent",
       description: "A health direction agent that turns daily face timeline signals and optional smart ring recovery data into wellness direction with both TCM and modern medical framing.",
       capabilities: "daily_face_timeline,wellness_direction,smart_ring_subscription,x402_checkout,erc8004_identity",
       endpoint: `${window.location.origin}${window.location.pathname}#agent-section`,
@@ -2879,7 +2879,7 @@
     if (!/^0x[a-fA-F0-9]{40}$/.test(treasury)) throw new Error("项目收款钱包地址不合法。");
 
     return {
-      orderId: `mm_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`,
+      orderId: `vs_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`,
       status: "created",
       createdAt: new Date().toISOString(),
       planId: plan.id,
@@ -2927,7 +2927,7 @@
 
       const typedData = {
         domain: {
-          name: "MicroMirrorOrder",
+          name: "VitalScopeOrder",
           version: "1",
           chainId: 48816,
           verifyingContract: state.currentOrder.treasury,

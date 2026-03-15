@@ -1,4 +1,9 @@
-# Micro Mirror 工程说明
+# VitalScope 工程说明
+
+## 命名说明
+- 当前长期项目名为 `VitalScope`
+- 本文部分历史内容仍会引用 `Micro Mirror`
+- 那些表述指向的是当前项目的 hackathon 原型阶段
 
 ## 当前结构
 - `index.html`
